@@ -76,9 +76,16 @@
     <!-- 2. Horizontal Ranking Carousel -->
     <section class="ranking-section">
       <div class="ranking-header">
-        <div class="ranking-title">
-          <i data-lucide="trophy" class="trophy-icon"></i>
-          <span id="rankingRegionLabel">전체</span> 걷기 좋은 거리 Top 10
+        <div class="ranking-title-group">
+          <div class="ranking-title">
+            <i data-lucide="trophy" class="trophy-icon"></i>
+            <span id="rankingRegionLabel">전체</span> 걷기 좋은 거리 Top 10
+          </div>
+          <!-- How Streets Were Selected Button -->
+          <button id="btnOpenSelectionInfo" class="btn-selection-info">
+            <i data-lucide="help-circle"></i>
+            <span>거리는 어떻게 선정되었나요?</span>
+          </button>
         </div>
         <span class="ranking-hint">카드를 클릭하면 좌측 5단계 분석창과 함께 해당 거리로 이동합니다</span>
       </div>
@@ -121,7 +128,6 @@
         <div class="panel-title">
           <i data-lucide="sliders" class="panel-icon"></i>
           <span>나만의 걷기 기준 설정</span>
-          <span class="badge-realtime">0.001초 실시간 재계산</span>
         </div>
         <button id="resetWeightsBtn" class="btn-reset">
           <i data-lucide="rotate-ccw"></i> 기본값 초기화
@@ -142,7 +148,7 @@
               <span class="unit">점</span>
             </div>
           </div>
-          <p class="weight-desc">(길이 넓고 차가 적어요)</p>
+          <p class="weight-desc">길이 넓고 차가 적어요</p>
           <button class="btn-calc-toggle" data-target="calc-env">
             <span>ℹ️ 수집 데이터 출처 & 계산 방식</span>
             <i data-lucide="chevron-down"></i>
@@ -169,7 +175,7 @@
               <span class="unit">점</span>
             </div>
           </div>
-          <p class="weight-desc">(사람이 적당히 있어 활기차요)</p>
+          <p class="weight-desc">사람이 적당히 있어 활기차요</p>
           <button class="btn-calc-toggle" data-target="calc-pop">
             <span>ℹ️ 수집 데이터 출처 & 계산 방식</span>
             <i data-lucide="chevron-down"></i>
@@ -195,7 +201,7 @@
               <span class="unit">점</span>
             </div>
           </div>
-          <p class="weight-desc">(주말 팝업이나 플리마켓이 열려요)</p>
+          <p class="weight-desc">팝업·공연 등 다채로운 볼거리가 열려요</p>
           <button class="btn-calc-toggle" data-target="calc-eve">
             <span>ℹ️ 수집 데이터 출처 & 계산 방식</span>
             <i data-lucide="chevron-down"></i>
@@ -220,7 +226,7 @@
               <span class="unit">점</span>
             </div>
           </div>
-          <p class="weight-desc">(지하철역이 가깝고 버스가 많아요)</p>
+          <p class="weight-desc">지하철역이 가깝고 버스가 많아요</p>
           <button class="btn-calc-toggle" data-target="calc-tra">
             <span>ℹ️ 수집 데이터 출처 & 계산 방식</span>
             <i data-lucide="chevron-down"></i>
@@ -238,7 +244,45 @@
 
     <!-- ================= MODALS ================= -->
 
-    <!-- 1. Street VS Comparison Modal -->
+    <!-- 1. Street Selection Criteria Modal -->
+    <div id="selectionModal" class="modal-backdrop hidden">
+      <div class="modal-card selection-modal-card">
+        <div class="modal-header">
+          <div class="modal-title"><i data-lucide="compass"></i> 거리는 어떻게 선정되었나요?</div>
+          <button class="btn-modal-close" id="btnCloseSelection"><i data-lucide="x"></i></button>
+        </div>
+        <div class="selection-modal-body">
+          <div class="selection-intro">
+            <strong>&lt;걷기 좋은 동네&gt;</strong>는 대한민국 정부 공공데이터와 공간 빅데이터 분석을 통해, 대낮 시간대에 가장 쾌적하고 걷는 즐거움이 있는 거리를 발굴하여 추천합니다.
+          </div>
+          <div class="selection-steps">
+            <div class="step-item">
+              <div class="step-icon">1️⃣</div>
+              <div class="step-desc">
+                <h4>공식 보행 특화 가로 DB 추출</h4>
+                <p>국토교통부 및 서울시·지자체의 '보행자우선도로', '차 없는 거리', '골목형 상권 활성화 구역' 공식 지정 가로를 1차 후보군으로 선정합니다.</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-icon">2️⃣</div>
+              <div class="step-desc">
+                <h4>4대 핵심 지표 다차원 평가</h4>
+                <p><strong>3.5m+ 유효 보도폭</strong>, <strong>5m 골든존 인구밀도(E.T. Hall 근접학)</strong>, <strong>주말 팝업·플리마켓</strong>, <strong>지하철 도보 5분 역세권</strong> 데이터를 종합 분석합니다.</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-icon">3️⃣</div>
+              <div class="step-desc">
+                <h4>실시간 가중치 랭킹 산출</h4>
+                <p>사용자가 설정한 가중치에 따라 실시간으로 100점 만점 환산 및 5단계 보행 등급을 매겨 지역별 Top 10 순위를 투명하게 공개합니다.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Street VS Comparison Modal -->
     <div id="compareModal" class="modal-backdrop hidden">
       <div class="modal-card compare-modal-card">
         <div class="modal-header">
@@ -264,7 +308,7 @@
       </div>
     </div>
 
-    <!-- 2. Saved Custom Routes Modal -->
+    <!-- 3. Saved Custom Routes Modal -->
     <div id="savedModal" class="modal-backdrop hidden">
       <div class="modal-card saved-modal-card">
         <div class="modal-header">
