@@ -32,6 +32,12 @@
 
       <!-- Action Buttons Group -->
       <div class="nav-actions">
+        <!-- Live GPS Locate My District Button -->
+        <button id="btnGeoLocate" class="btn-nav-action btn-gps">
+          <i data-lucide="crosshair"></i>
+          <span>🎯 내 위치 찾기</span>
+        </button>
+
         <!-- Direct Pinpoint Diagnostics Mode Button -->
         <button id="btnPinpointMode" class="btn-nav-action">
           <i data-lucide="map-pin"></i>
@@ -53,16 +59,16 @@
         <!-- National & Regional Selector -->
         <div class="region-selector-wrapper">
           <select id="sggSelect" class="styled-select">
-            <option value="ALL">전체</option>
-            <option value="서울">서울특별시 (성수, 연남, 익선, 도산)</option>
-            <option value="부산">부산광역시 (해운대, 서면, 영도)</option>
-            <option value="대구">대구광역시 (동성로, 김광석길)</option>
-            <option value="인천">인천광역시 (개항장, 송도)</option>
-            <option value="대전">대전광역시 (성심당 문화거리)</option>
-            <option value="광주">광주광역시 (동명동 카페거리)</option>
-            <option value="전북">전북/전주 (전주 한옥마을)</option>
-            <option value="강원">강원특별자치도 (강릉 안목해변)</option>
-            <option value="제주">제주특별자치도 (제주 탑동해안)</option>
+            <option value="ALL">전국 전체</option>
+            <option value="대구">대구광역시 (수성못, 봉산, 앞산, 두류, 김광석길)</option>
+            <option value="서울">서울특별시 (정동, 북촌, 성수, 연트럴, 석촌)</option>
+            <option value="부산">부산광역시 (구남로, 온천천, 흰여울, 달맞이, 전포)</option>
+            <option value="수원/경기">수원/경기 (행궁동 성곽길, 광교호수)</option>
+            <option value="대전">대전광역시 (소제동 관사촌)</option>
+            <option value="광주">광주광역시 (양림동 펭귄마을)</option>
+            <option value="전북">전북특별자치도 (전주 한옥마을)</option>
+            <option value="강원">강원특별자치도 (강릉 초당 솔향길)</option>
+            <option value="제주">제주특별자치도 (제주 원도심 돌담길)</option>
           </select>
         </div>
       </div>
@@ -77,13 +83,13 @@
       <button id="btnCancelPinpoint" class="btn-cancel-pinpoint">진단 취소</button>
     </div>
 
-    <!-- 2. Horizontal Ranking Carousel -->
+    <!-- 2. Horizontal Ranking Carousel (Dong-Centric) -->
     <section class="ranking-section">
       <div class="ranking-header">
         <div class="ranking-title-group">
           <div class="ranking-title">
             <i data-lucide="trophy" class="trophy-icon"></i>
-            <span id="rankingRegionLabel">전국</span> 걷기 좋은 거리 Top 10
+            <span id="rankingRegionLabel">전국</span> 걷기 좋은 동네 Top 10
           </div>
           <!-- Compact Clean Selection Info Badge Button -->
           <button id="btnOpenSelectionInfo" class="btn-selection-info" title="거리 선정 기준 보기">
@@ -91,7 +97,7 @@
             <span>거리 선정에 대해</span>
           </button>
         </div>
-        <span class="ranking-hint">카드를 클릭하면 좌측 5단계 분석창과 함께 해당 거리로 이동합니다</span>
+        <span class="ranking-hint" id="rankingStatusHint">카드를 클릭하면 해당 동네 5단계 분석창과 지도로 이동합니다</span>
       </div>
       
       <div class="ranking-carousel" id="rankingCarousel">
@@ -113,17 +119,6 @@
         </div>
       </aside>
 
-      <!-- Map Legend -->
-      <div class="map-legend">
-        <div class="legend-title">5단계 보행 등급</div>
-        <div class="legend-items">
-          <div class="legend-item"><span class="legend-color color-green"></span> 5단계: 최우수 명품길 (90점+)</div>
-          <div class="legend-item"><span class="legend-color color-lightgreen"></span> 4단계: 우수 추천길 (80~89점)</div>
-          <div class="legend-item"><span class="legend-color color-yellow"></span> 3단계: 보통 일상길 (70~79점)</div>
-          <div class="legend-item"><span class="legend-color color-orange"></span> 2단계: 주의 혼잡길 (60~69점)</div>
-          <div class="legend-item"><span class="legend-color color-red"></span> 1단계: 보행 비추천 (&lt;60점)</div>
-        </div>
-      </div>
     </main>
 
     <!-- 4. Bottom Custom Weight Panel with Individual Formula Dropdowns -->
@@ -257,7 +252,7 @@
         </div>
         <div class="selection-modal-body">
           <div class="selection-intro">
-            <strong>&lt;걷기 좋은 동네&gt;</strong>는 대한민국 정부 공공데이터와 공간 빅데이터 분석을 통해, 대낮 시간대에 가장 쾌적하고 걷는 즐거움이 있는 거리를 전국 단위로 발굴하여 추천합니다.
+            <strong>&lt;걷기 좋은 동네&gt;</strong>는 대한민국 정부 공공데이터와 공간 빅데이터 분석을 통해, 대낮 시간대에 가장 쾌적하고 걷는 즐거움이 있는 동네와 골목을 전국 단위로 발굴하여 추천합니다.
           </div>
           <div class="selection-steps">
             <div class="step-item">
@@ -277,8 +272,8 @@
             <div class="step-item">
               <div class="step-icon">3️⃣</div>
               <div class="step-desc">
-                <h4>실시간 가중치 랭킹 산출</h4>
-                <p>사용자가 설정한 가중치에 따라 실시간으로 100점 만점 환산 및 5단계 보행 등급을 매겨 전국 및 지역별 Top 10 순위를 투명하게 공개합니다.</p>
+                <h4>동 내부 5단계 그라데이션 진단</h4>
+                <p>동네 중심부의 쾌적한 안심 보행존부터 외곽 혼잡존까지 5단계 색상으로 시각화하여 투명하게 공개합니다.</p>
               </div>
             </div>
           </div>
@@ -296,12 +291,12 @@
         
         <div class="compare-selectors">
           <div class="compare-select-col">
-            <label for="compareSelectA">거리 A 선택:</label>
+            <label for="compareSelectA">동네 A 선택:</label>
             <select id="compareSelectA" class="styled-select compare-select"></select>
           </div>
           <div class="vs-badge">VS</div>
           <div class="compare-select-col">
-            <label for="compareSelectB">거리 B 선택:</label>
+            <label for="compareSelectB">동네 B 선택:</label>
             <select id="compareSelectB" class="styled-select compare-select"></select>
           </div>
         </div>

@@ -1,29 +1,43 @@
 $port = 8080
 $folder = "C:\Users\jl_rb\Documents\antigravity\intelligent-chandrasekhar\street_dna"
+
+# Kill any existing process on port 8080
+try {
+    $existing = Get-NetTCPConnection -LocalPort $port -ErrorAction SilentlyContinue
+    if ($existing) {
+        $existing | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }
+    }
+} catch {}
+
+Start-Sleep -Milliseconds 500
+
 $listener = New-Object System.Net.HttpListener
-$listener.Prefixes.Add("http://*:$port/")
+$listener.Prefixes.Add("http://localhost:$port/")
+$listener.Prefixes.Add("http://127.0.0.1:$port/")
+
 try {
     $listener.Start()
+    Write-Host "HTTP Server started and listening on http://localhost:$port/"
 } catch {
-    $listener = New-Object System.Net.HttpListener
-    $listener.Prefixes.Add("http://localhost:$port/")
-    $listener.Prefixes.Add("http://127.0.0.1:$port/")
-    $listener.Start()
+    Write-Host "Failed to start listener: $_"
+    exit
 }
 
-Write-Host "HTTP Server started at port $port"
-
-try {
-    while ($listener.IsListening) {
+while ($true) {
+    try {
         $context = $listener.GetContext()
         $request = $context.Request
         $response = $context.Response
 
         $path = $request.Url.LocalPath
-        if ($path -eq "/" -or $path -eq "") {
+        if ($path -eq "/" -or [string]::IsNullOrWhiteSpace($path)) {
             $path = "/index.html"
         }
-        $localPath = Join-Path $folder ($path.TrimStart('/').Replace('/', '\'))
+        $cleanPath = $path.TrimStart('/').Replace('/', '\')
+        $localPath = Join-Path $folder $cleanPath
+
+        $response.Headers.Add("Access-Control-Allow-Origin", "*")
+        $response.Headers.Add("Cache-Control", "no-cache, no-store, must-revalidate")
 
         if (Test-Path $localPath -PathType Leaf) {
             $ext = [System.IO.Path]::GetExtension($localPath).ToLower()
@@ -38,7 +52,6 @@ try {
                 default { "application/octet-stream" }
             }
             $response.ContentType = $mime
-            $response.Headers.Add("Access-Control-Allow-Origin", "*")
             $bytes = [System.IO.File]::ReadAllBytes($localPath)
             $response.ContentLength64 = $bytes.Length
             $response.OutputStream.Write($bytes, 0, $bytes.Length)
@@ -49,7 +62,7 @@ try {
             $response.OutputStream.Write($msg, 0, $msg.Length)
         }
         $response.Close()
+    } catch {
+        # Catch and continue loop
     }
-} finally {
-    $listener.Stop()
 }

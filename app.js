@@ -1,8 +1,11 @@
-// === 걷기 좋은 동네: Interactive Walkability Engine ===
+// === 걷기 좋은 동네: Clean Minimal & Dong Focus Engine (Option 3) ===
 
 let rawGeoData = null;
 let map = null;
 let activeFeatureId = null;
+let userLocation = null;
+let userMarker = null;
+let mapMarkers = [];
 
 // Pinpoint Diagnostics Mode State
 let isPinpointMode = false;
@@ -21,21 +24,22 @@ const defaultWeights = {
 // Regional Centers for Map Navigation
 const regionCenters = {
   'ALL': { center: [127.8, 36.0], zoom: 6.8 },
-  '서울': { center: [126.9880, 37.5450], zoom: 12.5 },
-  '부산': { center: [129.1100, 35.1500], zoom: 12.0 },
-  '대구': { center: [128.6010, 35.8670], zoom: 13.0 },
-  '인천': { center: [126.6300, 37.4400], zoom: 11.8 },
-  '대전': { center: [127.4280, 36.3280], zoom: 13.5 },
-  '광주': { center: [126.9265, 35.1495], zoom: 13.5 },
-  '전북': { center: [127.1510, 35.8150], zoom: 13.5 },
-  '강원': { center: [128.9480, 37.7725], zoom: 13.0 },
-  '제주': { center: [126.5270, 33.5190], zoom: 13.0 }
+  '대구': { center: [128.6010, 35.8650], zoom: 12.8 },
+  '서울': { center: [126.9800, 37.5600], zoom: 12.5 },
+  '부산': { center: [129.0800, 35.1800], zoom: 12.0 },
+  '수원/경기': { center: [127.0168, 37.2852], zoom: 13.0 },
+  '대전': { center: [127.4390, 36.3335], zoom: 13.5 },
+  '광주': { center: [126.9180, 35.1425], zoom: 13.5 },
+  '전북': { center: [127.1510, 35.8150], zoom: 13.0 },
+  '강원': { center: [128.9245, 37.7915], zoom: 12.5 },
+  '제주': { center: [126.5238, 33.5142], zoom: 12.5 }
 };
 
 // DOM Elements
 const sggSelect = document.getElementById('sggSelect');
 const rankingRegionLabel = document.getElementById('rankingRegionLabel');
 const rankingCarousel = document.getElementById('rankingCarousel');
+const rankingStatusHint = document.getElementById('rankingStatusHint');
 const weightEnvInput = document.getElementById('weightEnv');
 const weightPopInput = document.getElementById('weightPop');
 const weightEveInput = document.getElementById('weightEve');
@@ -43,6 +47,7 @@ const weightTraInput = document.getElementById('weightTra');
 const resetWeightsBtn = document.getElementById('resetWeightsBtn');
 
 // Nav Action Buttons & Modals
+const btnGeoLocate = document.getElementById('btnGeoLocate');
 const btnPinpointMode = document.getElementById('btnPinpointMode');
 const pinpointBanner = document.getElementById('pinpointBanner');
 const pinpointStepText = document.getElementById('pinpointStepText');
@@ -109,36 +114,11 @@ function initMap() {
     await loadGeoJSON();
     initPinpointEvents();
     updateSavedBadge();
+    autoLocateUserOnStart();
   });
 }
 
-// 2. Exact Pedestrian Routing Enhancement via OSRM Foot Profile
-async function enhanceWithRealFootRouting(features) {
-  const promises = features.map(async (f) => {
-    const coords = f.geometry.coordinates;
-    if (coords.length < 2) return;
-    const start = coords[0];
-    const end = coords[coords.length - 1];
-
-    try {
-      const url = `https://routing.openstreetmap.de/routed-foot/route/v1/driving/${start[0]},${start[1]};${end[0]},${end[1]}?overview=full&geometries=geojson`;
-      const res = await fetch(url);
-      const data = await res.json();
-      if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
-        f.geometry = data.routes[0].geometry;
-      }
-    } catch (e) {
-      console.warn(`OSRM routing fallback for ${f.properties.name}:`, e);
-    }
-  });
-
-  await Promise.all(promises);
-  if (map && map.getSource('streets-src')) {
-    map.getSource('streets-src').setData(rawGeoData);
-  }
-}
-
-// 3. Load and Pre-calculate Base Metric Scores
+// 2. Load GeoJSON & Setup Dong Walkable Area Layer
 async function loadGeoJSON() {
   try {
     const res = await fetch(`data/streets.geojson?nocache=${Date.now()}`);
@@ -148,42 +128,37 @@ async function loadGeoJSON() {
       calculateFeatureSubScores(f.properties);
     });
 
-    map.addSource('streets-src', {
+    // 1) Selected Dong Area Highlight Source & Layers
+    map.addSource('selected-dong-src', {
       type: 'geojson',
-      data: rawGeoData
+      data: { type: 'FeatureCollection', features: [] }
     });
 
+    // Selected Dong Transparent Emerald Fill
     map.addLayer({
-      id: 'streets-casing',
+      id: 'selected-dong-fill',
+      type: 'fill',
+      source: 'selected-dong-src',
+      paint: {
+        'fill-color': '#10b981',
+        'fill-opacity': 0.12
+      }
+    });
+
+    // Selected Dong Clear Green Perimeter Line
+    map.addLayer({
+      id: 'selected-dong-line',
       type: 'line',
-      source: 'streets-src',
+      source: 'selected-dong-src',
       layout: { 'line-join': 'round', 'line-cap': 'round' },
       paint: {
-        'line-color': '#ffffff',
-        'line-width': 12,
+        'line-color': '#059669',
+        'line-width': 3.5,
         'line-opacity': 0.95
       }
     });
 
-    map.addLayer({
-      id: 'streets-line',
-      type: 'line',
-      source: 'streets-src',
-      layout: { 'line-join': 'round', 'line-cap': 'round' },
-      paint: {
-        'line-color': [
-          'step',
-          ['get', 'score_100'],
-          '#ef4444',
-          60, '#f97316',
-          70, '#eab308',
-          80, '#22c55e',
-          90, '#10b981'
-        ],
-        'line-width': 8
-      }
-    });
-
+    // Custom 2-point pinpoint route source
     map.addSource('custom-route-src', {
       type: 'geojson',
       data: { type: 'FeatureCollection', features: [] }
@@ -196,27 +171,92 @@ async function loadGeoJSON() {
       layout: { 'line-join': 'round', 'line-cap': 'round' },
       paint: {
         'line-color': '#8b5cf6',
-        'line-width': 8,
+        'line-width': 5,
         'line-dasharray': [2, 1]
       }
     });
 
-    map.on('click', 'streets-line', (e) => {
-      if (isPinpointMode || !e.features.length) return;
-      const feature = e.features[0];
-      highlightFeature(feature.properties.id, true);
-    });
-
-    map.on('mouseenter', 'streets-line', () => { if (!isPinpointMode) map.getCanvas().style.cursor = 'pointer'; });
-    map.on('mouseleave', 'streets-line', () => { if (!isPinpointMode) map.getCanvas().style.cursor = ''; });
-
     recalculateAll();
     populateCompareDropdowns();
-    enhanceWithRealFootRouting(rawGeoData.features);
 
   } catch (err) {
     console.error("Failed to load GeoJSON:", err);
   }
+}
+
+// 3. Generate Clean Smooth Dong Walkable Area Circle Polygon
+function generateDongWalkableAreaGeoJSON(feature) {
+  const center = feature.geometry.coordinates; // [lng, lat]
+  const radiusM = feature.properties.radius_m || 220;
+
+  // Convert meters to approximate lat/lng delta
+  const latDelta = radiusM / 111320;
+  const lngDelta = radiusM / (111320 * Math.cos(center[1] * Math.PI / 180));
+
+  const points = [];
+  const numSides = 32;
+  for (let i = 0; i < numSides; i++) {
+    const angle = (i / numSides) * 2 * Math.PI;
+    const lng = center[0] + lngDelta * Math.cos(angle);
+    const lat = center[1] + latDelta * Math.sin(angle);
+    points.push([lng, lat]);
+  }
+  points.push(points[0]); // close loop
+
+  return {
+    type: 'FeatureCollection',
+    features: [
+      {
+        type: 'Feature',
+        properties: {
+          dong_name: feature.properties.dong_name,
+          street_name: feature.properties.street_name
+        },
+        geometry: {
+          type: 'Polygon',
+          coordinates: [points]
+        }
+      }
+    ]
+  };
+}
+
+// 4. Update Minimal Dong Badge Chip Markers on Map
+function updateMapMarkers() {
+  mapMarkers.forEach(m => m.remove());
+  mapMarkers = [];
+
+  if (!rawGeoData || !map) return;
+  const selectedRegion = sggSelect.value;
+
+  const filtered = rawGeoData.features.filter((f) => {
+    if (selectedRegion === 'ALL') return true;
+    return f.properties.province === selectedRegion;
+  });
+
+  filtered.forEach((f) => {
+    const p = f.properties;
+    const coords = f.geometry.coordinates;
+
+    const el = document.createElement('div');
+    el.className = `dong-map-chip ${p.id === activeFeatureId ? 'active' : ''}`;
+    el.id = `marker-${p.id}`;
+    el.innerHTML = `
+      <span class="chip-name">${p.dong_name.split(' ')[1] || p.dong_name}</span>
+      <span class="chip-score">${p.score_100}점</span>
+    `;
+
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      highlightFeature(p.id, true);
+    });
+
+    const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
+      .setLngLat(coords)
+      .addTo(map);
+
+    mapMarkers.push(marker);
+  });
 }
 
 function calculateFeatureSubScores(p) {
@@ -247,7 +287,7 @@ function calculateFeatureSubScores(p) {
   p.sub_score_tra = scoreWalk * (p.transit_diversity || 0.8);
 }
 
-// 4. Realtime Scoring Engine
+// 5. Realtime Scoring Engine
 function recalculateAll() {
   if (!rawGeoData) return;
 
@@ -268,19 +308,36 @@ function recalculateAll() {
     p.score_raw = Math.round(rawTotal * 10) / 10;
   });
 
-  if (map && map.getSource('streets-src')) {
-    map.getSource('streets-src').setData(rawGeoData);
-  }
-
   renderRankingCarousel();
+  updateMapMarkers();
 
   if (activeFeatureId) {
     highlightFeature(activeFeatureId, false);
   }
 }
 
-// 5. Render Horizontal Ranking Carousel
+// 6. Distance Calculator (Haversine Formula)
+function getDistanceKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+function formatDistance(km) {
+  if (km < 1.0) {
+    return `📍 내 위치에서 ${Math.round(km * 1000)}m`;
+  }
+  return `📍 내 위치에서 ${km.toFixed(1)}km`;
+}
+
+// 7. Render Dong-Centric Ranking Carousel
 function renderRankingCarousel() {
+  if (!rawGeoData) return;
   const selectedRegion = sggSelect.value;
   rankingRegionLabel.textContent = selectedRegion === 'ALL' ? '전국' : selectedRegion;
 
@@ -289,12 +346,28 @@ function renderRankingCarousel() {
     return f.properties.province === selectedRegion;
   });
 
-  filtered.sort((a, b) => b.properties.score_100 - a.properties.score_100);
+  if (userLocation) {
+    filtered.forEach(f => {
+      const coords = f.geometry.coordinates;
+      f.properties.distanceKm = getDistanceKm(userLocation.lat, userLocation.lng, coords[1], coords[0]);
+    });
+
+    if (selectedRegion === 'ALL') {
+      filtered.sort((a, b) => a.properties.distanceKm - b.properties.distanceKm);
+      rankingStatusHint.textContent = `🎯 내 현재 위치 기준으로 가장 가까운 동네 순으로 정렬되었습니다`;
+    } else {
+      filtered.sort((a, b) => b.properties.score_100 - a.properties.score_100);
+      rankingStatusHint.textContent = `카드를 클릭하면 해당 동네 쾌적 권역과 5단계 분석창으로 이동합니다`;
+    }
+  } else {
+    filtered.sort((a, b) => b.properties.score_100 - a.properties.score_100);
+    rankingStatusHint.textContent = `카드를 클릭하면 해당 동네 쾌적 권역과 5단계 분석창으로 이동합니다`;
+  }
 
   rankingCarousel.innerHTML = '';
 
   if (filtered.length === 0) {
-    rankingCarousel.innerHTML = `<div style="padding: 12px; color: #64748b; font-size: 0.85rem;">해당 지역에 등록된 거리가 없습니다.</div>`;
+    rankingCarousel.innerHTML = `<div style="padding: 12px; color: #64748b; font-size: 0.85rem;">해당 지역에 등록된 동네가 없습니다.</div>`;
     return;
   }
 
@@ -308,6 +381,8 @@ function renderRankingCarousel() {
     else if (rank === 2) { rankClass = 'rank-2'; rankBadgeText = `🥈 2위`; }
     else if (rank === 3) { rankClass = 'rank-3'; rankBadgeText = `🥉 3위`; }
 
+    const distBadge = p.distanceKm !== undefined ? `<div class="card-distance-badge">${formatDistance(p.distanceKm)}</div>` : '';
+
     const card = document.createElement('div');
     card.className = `ranking-card ${p.id === activeFeatureId ? 'active' : ''}`;
     card.id = `card-${p.id}`;
@@ -316,9 +391,12 @@ function renderRankingCarousel() {
         <span class="rank-badge ${rankClass}">${rankBadgeText}</span>
         <span class="score-badge">${p.score_100}점</span>
       </div>
-      <div class="card-street-name" title="${p.name}">${p.name}</div>
-      <div class="card-region">${p.province} ${p.sgg} ${p.dong}</div>
-      <div class="card-tags">${p.highlight_tag || '#걷기명소'}</div>
+      <div class="card-dong-title">${p.dong_name}</div>
+      <div class="card-street-sub">${p.street_name} · ${p.vibe_desc}</div>
+      ${distBadge}
+      <div class="card-tags-row">
+        <span class="card-tags">${p.highlight_tag || '#걷기명소'}</span>
+      </div>
     `;
 
     card.addEventListener('click', () => {
@@ -329,10 +407,10 @@ function renderRankingCarousel() {
   });
 }
 
-// 6. 5-Tier Helper Functions
+// 8. 5-Tier Helper Functions
 function getTierInfo(score) {
   if (score >= 90) return { level: 5, label: '5단계: 최우수 명품길', colorClass: 'tier-5', barClass: 'active-5' };
-  if (score >= 80) return { level: 4, label: '4단계: 우수 추천길', colorClass: 'tier-4', barClass: 'active-4' };
+  if (score >= 80) return { level: 4, label: '4단계: 우수 안심길', colorClass: 'tier-4', barClass: 'active-4' };
   if (score >= 70) return { level: 3, label: '3단계: 보통 일상길', colorClass: 'tier-3', barClass: 'active-3' };
   if (score >= 60) return { level: 2, label: '2단계: 주의 혼잡길', colorClass: 'tier-2', barClass: 'active-2' };
   return { level: 1, label: '1단계: 보행 비추천', colorClass: 'tier-1', barClass: 'active-1' };
@@ -346,7 +424,7 @@ function getPillarTier(subScore) {
   return { text: '1단계 (미흡)', color: '#b91c1c' };
 }
 
-// 7. Highlight Feature, Fly to Location, and Open 5-Tier Left Sidebar
+// 9. Highlight Feature & Display Walkable Area Polygon + Open Sidebar
 function highlightFeature(id, shouldFly = true) {
   activeFeatureId = id;
   const feature = rawGeoData.features.find(f => f.properties.id === id);
@@ -354,9 +432,14 @@ function highlightFeature(id, shouldFly = true) {
 
   const p = feature.properties;
   const coords = feature.geometry.coordinates;
-  const midIdx = Math.floor(coords.length / 2);
-  const centerCoord = coords[midIdx];
 
+  // 1) Focus Dong Walkable Area with Emerald Green Outline
+  const areaGeoJSON = generateDongWalkableAreaGeoJSON(feature);
+  if (map && map.getSource('selected-dong-src')) {
+    map.getSource('selected-dong-src').setData(areaGeoJSON);
+  }
+
+  // Update card active state
   document.querySelectorAll('.ranking-card').forEach(c => c.classList.remove('active'));
   const activeCard = document.getElementById(`card-${id}`);
   if (activeCard) {
@@ -364,10 +447,17 @@ function highlightFeature(id, shouldFly = true) {
     activeCard.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
   }
 
+  // Update marker active state
+  document.querySelectorAll('.dong-map-chip').forEach(m => m.classList.remove('active'));
+  const activeMarker = document.getElementById(`marker-${id}`);
+  if (activeMarker) {
+    activeMarker.classList.add('active');
+  }
+
   if (shouldFly && map) {
     map.flyTo({
-      center: centerCoord,
-      zoom: 16.5,
+      center: coords,
+      zoom: 15.5,
       pitch: 0,
       padding: { left: 360, right: 20, top: 20, bottom: 20 },
       duration: 1200
@@ -401,7 +491,9 @@ function highlightFeature(id, shouldFly = true) {
   const cafeBadge = p.cafe_interval_m ? `<span class="cafe-mini-badge">☕ ${p.cafe_interval_m}m마다 카페</span>` : '';
 
   sidebarContent.innerHTML = `
-    <div class="sidebar-title">${p.name}</div>
+    <div class="sidebar-dong-header">${p.dong_name}</div>
+    <div class="sidebar-title">${p.street_name}</div>
+    <div class="sidebar-vibe">${p.vibe_desc}</div>
     <div class="sidebar-tags-row">
       <span class="sidebar-hashtag">${p.highlight_tag}</span>
       ${cafeBadge}
@@ -425,7 +517,7 @@ function highlightFeature(id, shouldFly = true) {
           <span class="pillar-eval-name">🌿 도보 환경</span>
           <span class="pillar-eval-tier" style="color: ${tierEnv.color}">${tierEnv.text}</span>
         </div>
-        <div class="pillar-subtext">보도폭 ${p.width_m}m · ${p.car_control_label.split(' ')[0]} · 경사 ${p.slope_pct}%</div>
+        <div class="pillar-subtext">보도폭 ${p.width_m}m · ${p.car_control_label ? p.car_control_label.split(' ')[0] : '보행안심'} · 경사 ${p.slope_pct}%</div>
       </div>
 
       <div class="pillar-eval-item">
@@ -464,6 +556,10 @@ closeSidebarBtn.addEventListener('click', () => {
   detailSidebar.classList.remove('open');
   activeFeatureId = null;
   document.querySelectorAll('.ranking-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.dong-map-chip').forEach(m => m.classList.remove('active'));
+  if (map && map.getSource('selected-dong-src')) {
+    map.getSource('selected-dong-src').setData({ type: 'FeatureCollection', features: [] });
+  }
 });
 
 // Selection Info Modal Event
@@ -476,7 +572,83 @@ btnCloseSelection.addEventListener('click', () => {
 });
 
 // ==========================================
-// 8. 📍 Pinpoint 2-Point Custom Diagnostics
+// 10. 📍 GPS Live Geolocation Engine
+// ==========================================
+function autoLocateUserOnStart() {
+  if (!navigator.geolocation) return;
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      userLocation = {
+        lng: pos.coords.longitude,
+        lat: pos.coords.latitude
+      };
+      displayUserMarker(userLocation);
+      
+      map.flyTo({
+        center: [userLocation.lng, userLocation.lat],
+        zoom: 13.0,
+        pitch: 0,
+        duration: 1500
+      });
+
+      renderRankingCarousel();
+    },
+    (err) => {
+      console.warn("Geolocation skipped:", err.message);
+    },
+    { timeout: 5000 }
+  );
+}
+
+btnGeoLocate.addEventListener('click', () => {
+  if (!navigator.geolocation) {
+    alert("현재 브라우저에서 위치 서비스를 지원하지 않습니다.");
+    return;
+  }
+
+  btnGeoLocate.classList.add('active');
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      userLocation = {
+        lng: pos.coords.longitude,
+        lat: pos.coords.latitude
+      };
+      displayUserMarker(userLocation);
+
+      map.flyTo({
+        center: [userLocation.lng, userLocation.lat],
+        zoom: 13.0,
+        pitch: 0,
+        duration: 1500
+      });
+
+      sggSelect.value = 'ALL';
+      renderRankingCarousel();
+      updateMapMarkers();
+      setTimeout(() => btnGeoLocate.classList.remove('active'), 1000);
+    },
+    (err) => {
+      btnGeoLocate.classList.remove('active');
+      alert("현재 위치 정보를 가져올 수 없습니다. 브라우저 위치 권한을 허용해 주세요.");
+    }
+  );
+});
+
+function displayUserMarker(loc) {
+  if (userMarker) userMarker.remove();
+
+  const el = document.createElement('div');
+  el.className = 'user-gps-marker';
+  el.title = '내 현재 위치';
+
+  userMarker = new maplibregl.Marker({ element: el })
+    .setLngLat([loc.lng, loc.lat])
+    .addTo(map);
+}
+
+// ==========================================
+// 11. 📍 Pinpoint 2-Point Custom Diagnostics
 // ==========================================
 function initPinpointEvents() {
   btnPinpointMode.addEventListener('click', () => {
@@ -549,7 +721,7 @@ function clearPinpointMarkers() {
 
 async function calculatePinpointDiagnostics(start, end) {
   try {
-    const url = `https://routing.openstreetmap.de/routed-foot/route/v1/driving/${start[0]},${start[1]};${end[0]},${end[1]}?overview=full&geometries=geojson`;
+    const url = `https://routing.openstreetmap.de/routed-foot/route/v1/foot/${start[0]},${start[1]};${end[0]},${end[1]}?overview=full&geometries=geojson`;
     const res = await fetch(url);
     const data = await res.json();
 
@@ -564,17 +736,19 @@ async function calculatePinpointDiagnostics(start, end) {
 
     const customProps = {
       id: `custom_${Date.now()}`,
-      name: `내가 발굴한 맞춤 구간 (${distanceM}m)`,
+      dong_name: '내가 발굴한 맞춤 동네',
+      street_name: `맞춤 보행 코스 (${distanceM}m)`,
+      vibe_desc: `도보 약 ${durationMin}분 소요 구간`,
       province: '전국',
       sgg: '맞춤 분석 구역',
-      dong: `도보 약 ${durationMin}분 코스`,
-      width_m: 3.4,
-      car_control: 0.8,
+      dong: '맞춤동',
+      width_m: 3.6,
+      car_control: 0.85,
       car_control_label: '보행자 안심구간',
-      slope_pct: 1.0,
+      slope_pct: 0.8,
       density_dist_m: 5.1,
       event_level: 0.7,
-      event_label: '주변 로컬 상권 및 팝업 탐색구역',
+      event_label: '주변 로컬 상권 및 골목 탐색구역',
       cafe_interval_m: 25,
       transit_walk_min: durationMin,
       transit_diversity: 0.9,
@@ -630,7 +804,9 @@ function renderCustomSidebar(p, distanceM, durationMin) {
   }
 
   sidebarContent.innerHTML = `
-    <div class="sidebar-title">🎯 맞춤 진단 구간</div>
+    <div class="sidebar-dong-header">맞춤 진단 구간</div>
+    <div class="sidebar-title">${p.street_name}</div>
+    <div class="sidebar-vibe">${p.vibe_desc}</div>
     <div class="sidebar-tags-row">
       <span class="sidebar-hashtag">${p.highlight_tag}</span>
       <span class="cafe-mini-badge">☕ 약 25m마다 카페</span>
@@ -670,7 +846,7 @@ function renderCustomSidebar(p, distanceM, durationMin) {
           <span class="pillar-eval-name">🎪 이벤트</span>
           <span class="pillar-eval-tier" style="color: ${tierEve.color}">${tierEve.text}</span>
         </div>
-        <div class="pillar-subtext">로컬 카페 및 감성 상권 인접</div>
+        <div class="pillar-subtext">로컬 카페 및 골목 상권 인접</div>
       </div>
 
       <div class="pillar-eval-item">
@@ -691,7 +867,7 @@ function renderCustomSidebar(p, distanceM, durationMin) {
   lucide.createIcons();
 
   document.getElementById('btnSaveThisRoute').addEventListener('click', () => {
-    const routeName = prompt('저장할 코스의 이름을 입력해주세요:', p.name);
+    const routeName = prompt('저장할 코스의 이름을 입력해주세요:', p.dong_name);
     if (routeName) {
       saveCustomRoute(routeName, p, customRouteFeature);
     }
@@ -699,7 +875,7 @@ function renderCustomSidebar(p, distanceM, durationMin) {
 }
 
 // ==========================================
-// 9. 💾 LocalStorage Saved Routes System
+// 12. 💾 LocalStorage Saved Routes System
 // ==========================================
 function getSavedRoutes() {
   return JSON.parse(localStorage.getItem('street_dna_saved_routes') || '[]');
@@ -783,7 +959,7 @@ function renderSavedModal() {
 }
 
 // ==========================================
-// 10. ⚖️ 1:1 Street VS Comparison Modal
+// 13. ⚖️ 1:1 Dong VS Comparison Modal
 // ==========================================
 function populateCompareDropdowns() {
   compareSelectA.innerHTML = '';
@@ -791,10 +967,10 @@ function populateCompareDropdowns() {
 
   rawGeoData.features.forEach((f, idx) => {
     const p = f.properties;
-    const optA = new Option(`[${p.province}] ${p.name}`, p.id);
-    const optB = new Option(`[${p.province}] ${p.name}`, p.id);
+    const optA = new Option(`[${p.dong_name}] ${p.street_name}`, p.id);
+    const optB = new Option(`[${p.dong_name}] ${p.street_name}`, p.id);
     if (idx === 0) optA.selected = true;
-    if (idx === 5) optB.selected = true; // Compare Seoul vs Busan by default
+    if (idx === 1) optB.selected = true;
     compareSelectA.add(optA);
     compareSelectB.add(optB);
   });
@@ -850,12 +1026,12 @@ function renderCompareMatrix() {
     <div class="compare-row">
       <div class="compare-val-a ${pA.width_m >= pB.width_m ? 'val-highlight' : ''}">
         보도폭 <strong>${pA.width_m}m</strong><br>
-        <span style="font-size:0.75rem; color:#64748b;">${pA.car_control_label.split(' ')[0]}</span>
+        <span style="font-size:0.75rem; color:#64748b;">${pA.car_control_label ? pA.car_control_label.split(' ')[0] : '보행안심'}</span>
       </div>
       <div class="compare-label-center">🌿 도보 환경</div>
       <div class="compare-val-b ${pB.width_m >= pA.width_m ? 'val-highlight' : ''}">
         보도폭 <strong>${pB.width_m}m</strong><br>
-        <span style="font-size:0.75rem; color:#64748b;">${pB.car_control_label.split(' ')[0]}</span>
+        <span style="font-size:0.75rem; color:#64748b;">${pB.car_control_label ? pB.car_control_label.split(' ')[0] : '보행안심'}</span>
       </div>
     </div>
 
@@ -898,7 +1074,7 @@ function renderCompareMatrix() {
   `;
 }
 
-// 11. Event Listeners for Custom Weight Inputs
+// 14. Event Listeners for Custom Weight Inputs
 [weightEnvInput, weightPopInput, weightEveInput, weightTraInput].forEach(input => {
   input.addEventListener('input', () => {
     recalculateAll();
@@ -915,12 +1091,21 @@ resetWeightsBtn.addEventListener('click', () => {
 
 sggSelect.addEventListener('change', () => {
   renderRankingCarousel();
+  updateMapMarkers();
+
   const selectedRegion = sggSelect.value;
   const viewInfo = regionCenters[selectedRegion] || regionCenters['ALL'];
 
   if (selectedRegion === 'ALL') {
-    map.flyTo({ center: viewInfo.center, zoom: viewInfo.zoom, pitch: 0, padding: { left: 0 }, duration: 1200 });
+    if (userLocation) {
+      map.flyTo({ center: [userLocation.lng, userLocation.lat], zoom: 13.0, pitch: 0, padding: { left: 0 }, duration: 1200 });
+    } else {
+      map.flyTo({ center: viewInfo.center, zoom: viewInfo.zoom, pitch: 0, padding: { left: 0 }, duration: 1200 });
+    }
     detailSidebar.classList.remove('open');
+    if (map && map.getSource('selected-dong-src')) {
+      map.getSource('selected-dong-src').setData({ type: 'FeatureCollection', features: [] });
+    }
   } else {
     const firstFeature = rawGeoData.features.find(f => f.properties.province === selectedRegion);
     if (firstFeature) {

@@ -111,6 +111,16 @@ body {
   border-color: #10b981;
 }
 
+.btn-nav-action.btn-gps {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+.btn-nav-action.btn-gps:hover {
+  background: #dbeafe;
+}
+
 .btn-nav-action svg {
   width: 15px;
   height: 15px;
@@ -256,6 +266,7 @@ body {
   overflow-x: auto;
   padding-bottom: 6px;
   scroll-behavior: smooth;
+  min-height: 90px;
 }
 
 .ranking-carousel::-webkit-scrollbar {
@@ -267,9 +278,9 @@ body {
   border-radius: 3px;
 }
 
-/* Ranking Card */
+/* Dong-Centric Ranking Card */
 .ranking-card {
-  flex: 0 0 240px;
+  flex: 0 0 250px;
   background: #f8fafc;
   border: 1.5px solid var(--border-color);
   border-radius: 12px;
@@ -278,7 +289,7 @@ body {
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   position: relative;
 }
 
@@ -318,42 +329,87 @@ body {
   color: var(--primary-dark);
 }
 
-.card-street-name {
-  font-size: 0.95rem;
-  font-weight: 700;
+/* Dong Main Title */
+.card-dong-title {
+  font-size: 0.98rem;
+  font-weight: 800;
   color: #0f172a;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.card-region {
+/* Street Name & Character Subtitle */
+.card-street-sub {
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: #475569;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-distance-badge {
+  font-size: 0.7rem;
+  color: #2563eb;
+  font-weight: 700;
+  background: #eff6ff;
+  padding: 1px 6px;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.card-tags-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  flex-wrap: wrap;
 }
 
 .card-tags {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   color: #059669;
   font-weight: 700;
   background: #ffffff;
-  padding: 2px 6px;
+  padding: 2px 5px;
   border-radius: 4px;
   border: 1px solid #d1fae5;
-  width: fit-content;
 }
 
 /* === 3. Main Large Interactive Map === */
 .map-section {
   flex: 1;
   position: relative;
-  min-height: 380px;
+  min-height: 420px;
   overflow: hidden;
 }
 
 #map {
   width: 100%;
   height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* User Live GPS Marker */
+.user-gps-marker {
+  width: 20px;
+  height: 20px;
+  background: #3b82f6;
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.35);
+  animation: pulseMarker 2s infinite;
+}
+
+@keyframes pulseMarker {
+  0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.6); }
+  70% { box-shadow: 0 0 0 14px rgba(59, 130, 246, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
 }
 
 /* Left Detail Sidebar */
@@ -414,19 +470,37 @@ body {
   height: 100%;
 }
 
+.sidebar-dong-header {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #059669;
+  background: #ecfdf5;
+  padding: 2px 8px;
+  border-radius: 6px;
+  width: fit-content;
+  margin-bottom: 4px;
+}
+
 .sidebar-title {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: 800;
   color: #0f172a;
   margin-bottom: 2px;
   padding-right: 30px;
 }
 
+.sidebar-vibe {
+  font-size: 0.8rem;
+  color: #475569;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
 .sidebar-tags-row {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   flex-wrap: wrap;
 }
 
@@ -1178,3 +1252,58 @@ body {
     width: 100%;
   }
 }
+
+/* === Dong Map Chip Marker === */
+.dong-map-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  padding: 5px 11px;
+  border-radius: 20px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  border: 1.5px solid #10b981;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+  font-family: var(--font-main);
+  user-select: none;
+}
+
+.dong-map-chip:hover {
+  transform: translateY(-2px) scale(1.06);
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);
+  border-color: #059669;
+}
+
+.dong-map-chip.active {
+  background: #059669;
+  border-color: #047857;
+  box-shadow: 0 6px 22px rgba(5, 150, 105, 0.45);
+  transform: translateY(-3px) scale(1.10);
+}
+
+.chip-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.dong-map-chip.active .chip-name {
+  color: #ffffff;
+}
+
+.chip-score {
+  font-size: 0.75rem;
+  font-weight: 800;
+  background: #ecfdf5;
+  color: #059669;
+  padding: 2px 6px;
+  border-radius: 12px;
+}
+
+.dong-map-chip.active .chip-score {
+  background: #ffffff;
+  color: #059669;
+}
+
