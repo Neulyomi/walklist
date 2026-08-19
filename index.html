@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>걷기 좋은 동네 — 대낮에 걷기 좋은 거리 발굴 맵</title>
+  
+  <!-- Pretendard Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  
+  <!-- MapLibre GL JS -->
+  <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- 1. Top Navbar -->
+    <header class="top-nav">
+      <div class="brand">
+        <div class="logo-icon"><i data-lucide="footprints"></i></div>
+        <div class="brand-text">
+          <h1>걷기 좋은 동네</h1>
+          <p>대낮에 걷기 좋은 거리 발굴 맵</p>
+        </div>
+      </div>
+
+      <!-- Action Buttons Group -->
+      <div class="nav-actions">
+        <!-- Direct Pinpoint Diagnostics Mode Button -->
+        <button id="btnPinpointMode" class="btn-nav-action">
+          <i data-lucide="map-pin"></i>
+          <span>📍 구간 직접 진단</span>
+        </button>
+
+        <!-- Street VS Compare Modal Button -->
+        <button id="btnOpenCompare" class="btn-nav-action">
+          <i data-lucide="scale"></i>
+          <span>⚖️ 거리 비교하기</span>
+        </button>
+
+        <!-- Saved Custom Routes Button -->
+        <button id="btnOpenSaved" class="btn-nav-action">
+          <i data-lucide="bookmark"></i>
+          <span>💾 내 보관함 (<span id="savedCountBadge">0</span>)</span>
+        </button>
+
+        <!-- Region Selector -->
+        <div class="region-selector-wrapper">
+          <select id="sggSelect" class="styled-select">
+            <option value="ALL">🌟 서울 전체</option>
+            <option value="성동구">성동구 (성수동, 서울숲)</option>
+            <option value="마포구">마포구 (연남동, 망원동)</option>
+            <option value="종로구">종로구 (서촌, 익선동)</option>
+            <option value="용산구">용산구 (한남동, 용리단길)</option>
+            <option value="강남구">강남구 (가로수길, 도산공원)</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <!-- Pinpoint Diagnostic Notice Banner (Shown when active) -->
+    <div id="pinpointBanner" class="pinpoint-banner hidden">
+      <div class="banner-content">
+        <i data-lucide="crosshair" class="pulse-icon"></i>
+        <span id="pinpointStepText">지도에서 <strong>출발점 🚩</strong>을 클릭해 주세요</span>
+      </div>
+      <button id="btnCancelPinpoint" class="btn-cancel-pinpoint">진단 취소</button>
+    </div>
+
+    <!-- 2. Horizontal Ranking Carousel -->
+    <section class="ranking-section">
+      <div class="ranking-header">
+        <div class="ranking-title">
+          <i data-lucide="trophy" class="trophy-icon"></i>
+          <span id="rankingRegionLabel">전체</span> 걷기 좋은 거리 Top 10
+        </div>
+        <span class="ranking-hint">카드를 클릭하면 좌측 5단계 분석창과 함께 해당 거리로 이동합니다</span>
+      </div>
+      
+      <div class="ranking-carousel" id="rankingCarousel">
+        <!-- Javascript dynamically renders ranking cards here -->
+      </div>
+    </section>
+
+    <!-- 3. Main Large Interactive Map -->
+    <main class="map-section">
+      <div id="map"></div>
+
+      <!-- Left Detail Sidebar (5-Tier Step Rating Inspector) -->
+      <aside class="detail-sidebar" id="detailSidebar">
+        <button class="btn-close-sidebar" id="closeSidebarBtn" title="닫기">
+          <i data-lucide="x"></i>
+        </button>
+        <div class="sidebar-content" id="sidebarContent">
+          <!-- Dynamically injected 5-tier evaluation by JavaScript -->
+        </div>
+      </aside>
+
+      <!-- Map Legend -->
+      <div class="map-legend">
+        <div class="legend-title">5단계 보행 등급</div>
+        <div class="legend-items">
+          <div class="legend-item"><span class="legend-color color-green"></span> 5단계: 최우수 명품길 (90점+)</div>
+          <div class="legend-item"><span class="legend-color color-lightgreen"></span> 4단계: 우수 추천길 (80~89점)</div>
+          <div class="legend-item"><span class="legend-color color-yellow"></span> 3단계: 보통 일상길 (70~79점)</div>
+          <div class="legend-item"><span class="legend-color color-orange"></span> 2단계: 주의 혼잡길 (60~69점)</div>
+          <div class="legend-item"><span class="legend-color color-red"></span> 1단계: 보행 비추천 (&lt;60점)</div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 4. Bottom Custom Weight Panel with Individual Formula Dropdowns -->
+    <footer class="custom-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <i data-lucide="sliders" class="panel-icon"></i>
+          <span>나만의 걷기 기준 설정</span>
+          <span class="badge-realtime">0.001초 실시간 재계산</span>
+        </div>
+        <button id="resetWeightsBtn" class="btn-reset">
+          <i data-lucide="rotate-ccw"></i> 기본값 초기화
+        </button>
+      </div>
+
+      <div class="weight-inputs-grid">
+        
+        <!-- 1. 도보 환경 -->
+        <div class="weight-card" style="--accent-color: #10b981;">
+          <div class="weight-card-top">
+            <div class="weight-label">
+              <span class="category-icon">🌿</span>
+              <span class="category-name">도보 환경</span>
+            </div>
+            <div class="input-wrapper">
+              <input type="number" id="weightEnv" class="weight-input" value="35" min="0" max="100" step="5">
+              <span class="unit">점</span>
+            </div>
+          </div>
+          <p class="weight-desc">(길이 넓고 차가 적어요)</p>
+          <button class="btn-calc-toggle" data-target="calc-env">
+            <span>ℹ️ 수집 데이터 출처 & 계산 방식</span>
+            <i data-lucide="chevron-down"></i>
+          </button>
+          <div class="calc-box" id="calc-env">
+            <div class="calc-source-tag">📌 <strong>데이터 출처:</strong> 국토교통부 국가공간정보포털(NSDI) 도로명주소 전자지도 / 보행자우선도로 지정 고시</div>
+            <div class="calc-paper-tag">📚 <strong>관련 논문:</strong> Jan Gehl(2010) 《Life Between Buildings》, 서울연구원(2018) 《보행자 우선도로 조성에 따른 만족도 연구》</div>
+            <code>Score_env = 0.35 × 폭 + 0.35 × 차량통제 + 0.30 × 경사</code>
+            <p>• <strong>유효 보도폭:</strong> 3.5m 이상(1.0 만점), 2.5~3.5m(0.8), 1.5~2.5m(0.5), 1.5m 미만(0.1)<br>
+               • <strong>차량 통제:</strong> 보행전용로(1.0), 보행자우선도로(0.8), 생활도로(0.5), 보차혼용(0.2)<br>
+               • <strong>지형 평지성:</strong> 경사 3% 미만 평지(1.0), 5%(0.8), 8% 초과 급경사(0.0)</p>
+          </div>
+        </div>
+
+        <!-- 2. 인구밀도 -->
+        <div class="weight-card" style="--accent-color: #3b82f6;">
+          <div class="weight-card-top">
+            <div class="weight-label">
+              <span class="category-icon">👥</span>
+              <span class="category-name">인구밀도</span>
+            </div>
+            <div class="input-wrapper">
+              <input type="number" id="weightPop" class="weight-input" value="25" min="0" max="100" step="5">
+              <span class="unit">점</span>
+            </div>
+          </div>
+          <p class="weight-desc">(사람이 적당히 있어 활기차요)</p>
+          <button class="btn-calc-toggle" data-target="calc-pop">
+            <span>ℹ️ 수집 데이터 출처 & 계산 방식</span>
+            <i data-lucide="chevron-down"></i>
+          </button>
+          <div class="calc-box" id="calc-pop">
+            <div class="calc-source-tag">📌 <strong>데이터 출처:</strong> 통계청 SGIS 100m 격자 생활유동인구 / 공공데이터포털 전국 이동통신 생활인구(대낮 11~17시)</div>
+            <div class="calc-paper-tag">📚 <strong>관련 논문:</strong> Edward T. Hall(1966) 《The Hidden Dimension》 근접학, John J. Fruin(1971) 《Pedestrian Planning and Design》 LOS A/B</div>
+            <code>Score_pop = exp( - (d - 5.0m)² / (2 × 1.8²) )</code>
+            <p>• <strong>5m 골든존 가우시안 곡선:</strong> 1인당 점유면적 기반 사람 간격 $d$가 <strong>4.5~5.5m(5m 스위트스팟)</strong>일 때 1.0 만점.<br>
+               • 1.5m 미만(과밀) 및 15m 이상(적막) 시 곡선 감점 적용.</p>
+          </div>
+        </div>
+
+        <!-- 3. 이벤트 -->
+        <div class="weight-card" style="--accent-color: #f59e0b;">
+          <div class="weight-card-top">
+            <div class="weight-label">
+              <span class="category-icon">🎪</span>
+              <span class="category-name">이벤트</span>
+            </div>
+            <div class="input-wrapper">
+              <input type="number" id="weightEve" class="weight-input" value="20" min="0" max="100" step="5">
+              <span class="unit">점</span>
+            </div>
+          </div>
+          <p class="weight-desc">(주말 팝업이나 플리마켓이 열려요)</p>
+          <button class="btn-calc-toggle" data-target="calc-eve">
+            <span>ℹ️ 수집 데이터 출처 & 계산 방식</span>
+            <i data-lucide="chevron-down"></i>
+          </button>
+          <div class="calc-box" id="calc-eve">
+            <div class="calc-source-tag">📌 <strong>데이터 출처:</strong> 문화체육관광부 한국문화정보원(문화포털) API / 지자체 축제·플리마켓·팝업 인허가 DB</div>
+            <div class="calc-paper-tag">📚 <strong>관련 논문:</strong> Jane Jacobs(1961) 《The Death and Life of Great American Cities》, 국토연구원(2020) 《팝업스토어 및 문화마켓 집객효과》</div>
+            <code>Score_eve = Clamp( Events_3months / 3, 0.0, 1.0 )</code>
+            <p>• <strong>주말 플리마켓 & 팝업스토어:</strong> 최근 3개월 내 3건 이상 개최(1.0 만점), 2건(0.7), 1건(0.4), 없음(0.0)</p>
+          </div>
+        </div>
+
+        <!-- 4. 대중교통 -->
+        <div class="weight-card" style="--accent-color: #8b5cf6;">
+          <div class="weight-card-top">
+            <div class="weight-label">
+              <span class="category-icon">🚌</span>
+              <span class="category-name">대중교통</span>
+            </div>
+            <div class="input-wrapper">
+              <input type="number" id="weightTra" class="weight-input" value="20" min="0" max="100" step="5">
+              <span class="unit">점</span>
+            </div>
+          </div>
+          <p class="weight-desc">(지하철역이 가깝고 버스가 많아요)</p>
+          <button class="btn-calc-toggle" data-target="calc-tra">
+            <span>ℹ️ 수집 데이터 출처 & 계산 방식</span>
+            <i data-lucide="chevron-down"></i>
+          </button>
+          <div class="calc-box" id="calc-tra">
+            <div class="calc-source-tag">📌 <strong>데이터 출처:</strong> 국토교통부 대중교통정보센터(TAGO) 전국 버스정류장·노선 / 국가철도공단 역사 출구 위치</div>
+            <div class="calc-paper-tag">📚 <strong>관련 논문:</strong> Peter Calthorpe(1993) 《The Next American Metropolis》 TOD 보행권, 대한교통학회지(2019) 《대중교통 접근성과 다핵 노선망 영향》</div>
+            <code>Score_tra = (1 - WalkMin / 15) × (0.5 × Dest / 3 + 0.5 × H_entropy)</code>
+            <p>• <strong>도보 역세권:</strong> 도보 5분 컷(1.0 만점), 10분(0.7), 15분(0.4)에 도심 직결 버스 노선 섀넌 엔트로피 다양성($H$) 가점 결합.</p>
+          </div>
+        </div>
+
+      </div>
+    </footer>
+
+    <!-- ================= MODALS ================= -->
+
+    <!-- 1. Street VS Comparison Modal -->
+    <div id="compareModal" class="modal-backdrop hidden">
+      <div class="modal-card compare-modal-card">
+        <div class="modal-header">
+          <div class="modal-title"><i data-lucide="scale"></i> 걷기 좋은 거리 1:1 비교 분석 (VS)</div>
+          <button class="btn-modal-close" id="btnCloseCompare"><i data-lucide="x"></i></button>
+        </div>
+        
+        <div class="compare-selectors">
+          <div class="compare-select-col">
+            <label for="compareSelectA">거리 A 선택:</label>
+            <select id="compareSelectA" class="styled-select compare-select"></select>
+          </div>
+          <div class="vs-badge">VS</div>
+          <div class="compare-select-col">
+            <label for="compareSelectB">거리 B 선택:</label>
+            <select id="compareSelectB" class="styled-select compare-select"></select>
+          </div>
+        </div>
+
+        <div class="compare-matrix" id="compareMatrixContent">
+          <!-- Dynamically populated comparison table & bars -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Saved Custom Routes Modal -->
+    <div id="savedModal" class="modal-backdrop hidden">
+      <div class="modal-card saved-modal-card">
+        <div class="modal-header">
+          <div class="modal-title"><i data-lucide="bookmark"></i> 내가 저장한 맞춤 걷기 코스</div>
+          <button class="btn-modal-close" id="btnCloseSaved"><i data-lucide="x"></i></button>
+        </div>
+        <div class="saved-list" id="savedRoutesList">
+          <!-- Dynamically populated saved routes list -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
