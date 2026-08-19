@@ -18,6 +18,20 @@ const defaultWeights = {
   tra: 20
 };
 
+// Regional Centers for Map Navigation
+const regionCenters = {
+  'ALL': { center: [127.8, 36.0], zoom: 6.8 },
+  '서울': { center: [126.9880, 37.5450], zoom: 12.5 },
+  '부산': { center: [129.1100, 35.1500], zoom: 12.0 },
+  '대구': { center: [128.6010, 35.8670], zoom: 13.0 },
+  '인천': { center: [126.6300, 37.4400], zoom: 11.8 },
+  '대전': { center: [127.4280, 36.3280], zoom: 13.5 },
+  '광주': { center: [126.9265, 35.1495], zoom: 13.5 },
+  '전북': { center: [127.1510, 35.8150], zoom: 13.5 },
+  '강원': { center: [128.9480, 37.7725], zoom: 13.0 },
+  '제주': { center: [126.5270, 33.5190], zoom: 13.0 }
+};
+
 // DOM Elements
 const sggSelect = document.getElementById('sggSelect');
 const rankingRegionLabel = document.getElementById('rankingRegionLabel');
@@ -84,8 +98,8 @@ function initMap() {
         }
       ]
     },
-    center: [126.9880, 37.5450],
-    zoom: 12.2,
+    center: [127.8, 36.0],
+    zoom: 6.8,
     pitch: 0
   });
 
@@ -267,12 +281,12 @@ function recalculateAll() {
 
 // 5. Render Horizontal Ranking Carousel
 function renderRankingCarousel() {
-  const selectedSgg = sggSelect.value;
-  rankingRegionLabel.textContent = selectedSgg === 'ALL' ? '전체' : selectedSgg;
+  const selectedRegion = sggSelect.value;
+  rankingRegionLabel.textContent = selectedRegion === 'ALL' ? '전국' : selectedRegion;
 
   let filtered = rawGeoData.features.filter((f) => {
-    if (selectedSgg === 'ALL') return true;
-    return f.properties.sgg === selectedSgg;
+    if (selectedRegion === 'ALL') return true;
+    return f.properties.province === selectedRegion;
   });
 
   filtered.sort((a, b) => b.properties.score_100 - a.properties.score_100);
@@ -303,7 +317,7 @@ function renderRankingCarousel() {
         <span class="score-badge">${p.score_100}점</span>
       </div>
       <div class="card-street-name" title="${p.name}">${p.name}</div>
-      <div class="card-region">${p.sgg} ${p.dong}</div>
+      <div class="card-region">${p.province} ${p.sgg} ${p.dong}</div>
       <div class="card-tags">${p.highlight_tag || '#걷기명소'}</div>
     `;
 
@@ -356,7 +370,7 @@ function highlightFeature(id, shouldFly = true) {
       zoom: 16.5,
       pitch: 0,
       padding: { left: 360, right: 20, top: 20, bottom: 20 },
-      duration: 1000
+      duration: 1200
     });
   }
 
@@ -392,7 +406,7 @@ function highlightFeature(id, shouldFly = true) {
       <span class="sidebar-hashtag">${p.highlight_tag}</span>
       ${cafeBadge}
     </div>
-    <div class="sidebar-region">📍 ${p.sgg} ${p.dong}</div>
+    <div class="sidebar-region">📍 ${p.province} ${p.sgg} ${p.dong}</div>
     
     <div class="tier-header-card">
       <div class="tier-top-row">
@@ -435,7 +449,7 @@ function highlightFeature(id, shouldFly = true) {
           <span class="pillar-eval-name">🚌 대중교통</span>
           <span class="pillar-eval-tier" style="color: ${tierTra.color}">${tierTra.text}</span>
         </div>
-        <div class="pillar-subtext">지하철역 도보 ${p.transit_walk_min}분 컷</div>
+        <div class="pillar-subtext">지하철/정류장 도보 ${p.transit_walk_min}분 컷</div>
       </div>
     </div>
 
@@ -551,6 +565,7 @@ async function calculatePinpointDiagnostics(start, end) {
     const customProps = {
       id: `custom_${Date.now()}`,
       name: `내가 발굴한 맞춤 구간 (${distanceM}m)`,
+      province: '전국',
       sgg: '맞춤 분석 구역',
       dong: `도보 약 ${durationMin}분 코스`,
       width_m: 3.4,
@@ -776,10 +791,10 @@ function populateCompareDropdowns() {
 
   rawGeoData.features.forEach((f, idx) => {
     const p = f.properties;
-    const optA = new Option(`${p.sgg} - ${p.name}`, p.id);
-    const optB = new Option(`${p.sgg} - ${p.name}`, p.id);
+    const optA = new Option(`[${p.province}] ${p.name}`, p.id);
+    const optB = new Option(`[${p.province}] ${p.name}`, p.id);
     if (idx === 0) optA.selected = true;
-    if (idx === 1) optB.selected = true;
+    if (idx === 5) optB.selected = true; // Compare Seoul vs Busan by default
     compareSelectA.add(optA);
     compareSelectB.add(optB);
   });
@@ -873,11 +888,11 @@ function renderCompareMatrix() {
     <!-- 4. Transit Row -->
     <div class="compare-row">
       <div class="compare-val-a ${pA.transit_walk_min <= pB.transit_walk_min ? 'val-highlight' : ''}">
-        지하철역 <strong>도보 ${pA.transit_walk_min}분</strong>
+        도보 <strong>${pA.transit_walk_min}분 컷</strong>
       </div>
       <div class="compare-label-center">🚌 대중교통</div>
       <div class="compare-val-b ${pB.transit_walk_min <= pA.transit_walk_min ? 'val-highlight' : ''}">
-        지하철역 <strong>도보 ${pB.transit_walk_min}분</strong>
+        도보 <strong>${pB.transit_walk_min}분 컷</strong>
       </div>
     </div>
   `;
@@ -900,15 +915,18 @@ resetWeightsBtn.addEventListener('click', () => {
 
 sggSelect.addEventListener('change', () => {
   renderRankingCarousel();
-  const selectedSgg = sggSelect.value;
-  
-  if (selectedSgg === 'ALL') {
-    map.flyTo({ center: [126.9880, 37.5450], zoom: 12.2, pitch: 0, padding: { left: 0 } });
+  const selectedRegion = sggSelect.value;
+  const viewInfo = regionCenters[selectedRegion] || regionCenters['ALL'];
+
+  if (selectedRegion === 'ALL') {
+    map.flyTo({ center: viewInfo.center, zoom: viewInfo.zoom, pitch: 0, padding: { left: 0 }, duration: 1200 });
     detailSidebar.classList.remove('open');
   } else {
-    const firstFeature = rawGeoData.features.find(f => f.properties.sgg === selectedSgg);
+    const firstFeature = rawGeoData.features.find(f => f.properties.province === selectedRegion);
     if (firstFeature) {
       highlightFeature(firstFeature.properties.id, true);
+    } else {
+      map.flyTo({ center: viewInfo.center, zoom: viewInfo.zoom, pitch: 0, padding: { left: 0 }, duration: 1200 });
     }
   }
 });

@@ -50,15 +50,19 @@
           <span>💾 내 보관함 (<span id="savedCountBadge">0</span>)</span>
         </button>
 
-        <!-- Region Selector -->
+        <!-- National & Regional Selector -->
         <div class="region-selector-wrapper">
           <select id="sggSelect" class="styled-select">
-            <option value="ALL">🌟 서울 전체</option>
-            <option value="성동구">성동구 (성수동, 서울숲)</option>
-            <option value="마포구">마포구 (연남동, 망원동)</option>
-            <option value="종로구">종로구 (서촌, 익선동)</option>
-            <option value="용산구">용산구 (한남동, 용리단길)</option>
-            <option value="강남구">강남구 (가로수길, 도산공원)</option>
+            <option value="ALL">전체</option>
+            <option value="서울">서울특별시 (성수, 연남, 익선, 도산)</option>
+            <option value="부산">부산광역시 (해운대, 서면, 영도)</option>
+            <option value="대구">대구광역시 (동성로, 김광석길)</option>
+            <option value="인천">인천광역시 (개항장, 송도)</option>
+            <option value="대전">대전광역시 (성심당 문화거리)</option>
+            <option value="광주">광주광역시 (동명동 카페거리)</option>
+            <option value="전북">전북/전주 (전주 한옥마을)</option>
+            <option value="강원">강원특별자치도 (강릉 안목해변)</option>
+            <option value="제주">제주특별자치도 (제주 탑동해안)</option>
           </select>
         </div>
       </div>
@@ -79,7 +83,7 @@
         <div class="ranking-title-group">
           <div class="ranking-title">
             <i data-lucide="trophy" class="trophy-icon"></i>
-            <span id="rankingRegionLabel">전체</span> 걷기 좋은 거리 Top 10
+            <span id="rankingRegionLabel">전국</span> 걷기 좋은 거리 Top 10
           </div>
           <!-- Compact Clean Selection Info Badge Button -->
           <button id="btnOpenSelectionInfo" class="btn-selection-info" title="거리 선정 기준 보기">
@@ -253,14 +257,14 @@
         </div>
         <div class="selection-modal-body">
           <div class="selection-intro">
-            <strong>&lt;걷기 좋은 동네&gt;</strong>는 대한민국 정부 공공데이터와 공간 빅데이터 분석을 통해, 대낮 시간대에 가장 쾌적하고 걷는 즐거움이 있는 거리를 발굴하여 추천합니다.
+            <strong>&lt;걷기 좋은 동네&gt;</strong>는 대한민국 정부 공공데이터와 공간 빅데이터 분석을 통해, 대낮 시간대에 가장 쾌적하고 걷는 즐거움이 있는 거리를 전국 단위로 발굴하여 추천합니다.
           </div>
           <div class="selection-steps">
             <div class="step-item">
               <div class="step-icon">1️⃣</div>
               <div class="step-desc">
                 <h4>공식 보행 특화 가로 DB 추출</h4>
-                <p>국토교통부 및 서울시·지자체의 '보행자우선도로', '차 없는 거리', '골목형 상권 활성화 구역' 공식 지정 가로를 1차 후보군으로 선정합니다.</p>
+                <p>국토교통부 및 전국 지자체의 '보행자우선도로', '차 없는 거리', '골목형 상권 활성화 구역' 공식 지정 가로를 1차 후보군으로 선정합니다.</p>
               </div>
             </div>
             <div class="step-item">
@@ -274,7 +278,7 @@
               <div class="step-icon">3️⃣</div>
               <div class="step-desc">
                 <h4>실시간 가중치 랭킹 산출</h4>
-                <p>사용자가 설정한 가중치에 따라 실시간으로 100점 만점 환산 및 5단계 보행 등급을 매겨 지역별 Top 10 순위를 투명하게 공개합니다.</p>
+                <p>사용자가 설정한 가중치에 따라 실시간으로 100점 만점 환산 및 5단계 보행 등급을 매겨 전국 및 지역별 Top 10 순위를 투명하게 공개합니다.</p>
               </div>
             </div>
           </div>

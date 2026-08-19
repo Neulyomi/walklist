@@ -4,92 +4,80 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "seongsu_seongsu_gil",
-        "name": "성수 서울숲 아틀리에길 (서울숲2길)",
+        "id": "seoul_seongsu_forest",
+        "name": "성수 서울숲길",
+        "province": "서울",
         "sgg": "성동구",
         "dong": "성수동1가",
-        "width_m": 3.8,
+        "width_m": 4.2,
         "car_control": 1.0,
-        "car_control_label": "완전 차 없는 보행전용로",
-        "slope_pct": 0.8,
-        "shade_clean": 1.0,
-        "density_dist_m": 5.2,
-        "event_level": 0.9,
-        "event_label": "주말 정기 아트마켓 & 버스킹",
-        "cafe_interval_m": 22,
-        "events_list": [
-          "🎪 서울숲 아뜰리에 수제 공예 마켓 (매주 토·일 13:00~19:00)",
-          "🎸 서울숲 어쿠스틱 버스킹 존 (15:00~18:00)",
-          "🌿 친환경 리사이클링 팝업 부스"
-        ],
-        "transit_walk_min": 3.5,
-        "transit_diversity": 0.9,
+        "car_control_label": "보행자 전용도로 (차량 통제)",
+        "slope_pct": 0.5,
+        "density_dist_m": 5.0,
+        "event_level": 1.0,
+        "event_label": "주말 플리마켓 & 팝업 활발",
+        "events_list": ["서울숲 아뜰리에 플리마켓", "그린 라이프스타일 팝업스토어", "친환경 버스킹 공연"],
+        "cafe_interval_m": 15,
+        "transit_walk_min": 3.0,
+        "transit_diversity": 1.0,
         "highlight_tag": "#테디스오븐 #차없는거리 #서울숲그늘"
       },
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [127.0425, 37.5463],
-          [127.0475, 37.5438]
+          [127.0425, 37.5442],
+          [127.0438, 37.5451],
+          [127.0452, 37.5460]
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "id": "seongsu_yeonmujang",
-        "name": "성수동 연무장길",
+        "id": "seoul_seongsu_yeonmu",
+        "name": "성수 연무장길",
+        "province": "서울",
         "sgg": "성동구",
         "dong": "성수동2가",
-        "width_m": 4.2,
+        "width_m": 3.8,
         "car_control": 0.8,
-        "car_control_label": "보행자우선도로 (20km/h 제한)",
-        "slope_pct": 1.2,
-        "shade_clean": 0.9,
+        "car_control_label": "보행자 우선도로 (차량 서행)",
+        "slope_pct": 0.8,
         "density_dist_m": 4.8,
         "event_level": 1.0,
-        "event_label": "주말 플리마켓 & 팝업 5건+",
+        "event_label": "브랜드 팝업스토어 밀집 구역",
+        "events_list": ["글로벌 패션 브랜드 팝업", "성수 디자인 위크 마켓", "로컬 아티스트 야외 전시"],
         "cafe_interval_m": 18,
-        "events_list": [
-          "🎪 성수연방 주말 아트 & 플리마켓 (토·일 12:00~19:00)",
-          "💄 무신사 뷰티 시즌 팝업스토어 (성수역 3번출구 40m)",
-          "🎨 LCDC SEOUL 디자인 공예 기획전",
-          "🕶️ 젠틀몬스터 퀀텀 인스톨레이션 전시",
-          "☕ 성수 로컬 로스터리 카페 테라스 위크"
-        ],
-        "transit_walk_min": 4.0,
+        "transit_walk_min": 4.5,
         "transit_diversity": 0.95,
         "highlight_tag": "#디올성수 #주말플리마켓 #완전평지"
       },
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [127.0503, 37.5447],
-          [127.0610, 37.5422]
+          [127.0530, 37.5435],
+          [127.0555, 37.5445],
+          [127.0585, 37.5458]
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "id": "yeonnam_forest",
-        "name": "연남동 경의선 숲길 (연트럴파크)",
+        "id": "seoul_yeonnam_forest",
+        "name": "연남동 경의선숲길 (연트럴파크)",
+        "province": "서울",
         "sgg": "마포구",
         "dong": "연남동",
-        "width_m": 5.5,
+        "width_m": 4.5,
         "car_control": 1.0,
-        "car_control_label": "완전 보행자 전용 공원로",
-        "slope_pct": 0.5,
-        "shade_clean": 1.0,
-        "density_dist_m": 5.0,
-        "event_level": 0.8,
-        "event_label": "주말 버스킹 & 잔디 피크닉",
-        "cafe_interval_m": 25,
-        "events_list": [
-          "🎸 홍대 버스커스 주말 라이브 스테이지 (17:00~20:00)",
-          "🎪 연남 골목 아트 플리마켓 (동진시장 인근)",
-          "📚 독립출판 북마켓 스트리트"
-        ],
+        "car_control_label": "공원 보행전용로 (차량 진입 불가)",
+        "slope_pct": 0.3,
+        "density_dist_m": 5.2,
+        "event_level": 0.85,
+        "event_label": "주말 버스킹 & 잔디밭 피크닉",
+        "events_list": ["연트럴 야외 어쿠스틱 버스킹", "반려견 동반 나눔 플리마켓"],
+        "cafe_interval_m": 22,
         "transit_walk_min": 2.0,
         "transit_diversity": 1.0,
         "highlight_tag": "#랜디스도넛 #공원보행로 #초역세권"
@@ -97,236 +85,429 @@
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [126.9248, 37.5583],
-          [126.9178, 37.5672]
+          [126.9245, 37.5595],
+          [126.9230, 37.5620],
+          [126.9215, 37.5645]
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "id": "mangwon_poeun",
-        "name": "망원동 포은로 (망리단길)",
-        "sgg": "마포구",
-        "dong": "망원동",
-        "width_m": 2.8,
-        "car_control": 0.3,
-        "car_control_label": "보차혼용 생활도로",
-        "slope_pct": 1.1,
-        "shade_clean": 0.7,
-        "density_dist_m": 3.5,
-        "event_level": 0.5,
-        "event_label": "망원시장 연계 주말 장터",
-        "cafe_interval_m": 28,
-        "events_list": [
-          "🍢 망원시장 주말 미식 로컬 페스타",
-          "🪴 망원동 소소한 화훼 팝업"
-        ],
-        "transit_walk_min": 6.5,
-        "transit_diversity": 0.75,
-        "highlight_tag": "#망원시장 #어글리베이커리 #개성골목"
-      },
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.9068, 37.5529],
-          [126.9028, 37.5596]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "seochon_jahamun",
-        "name": "서촌 자하문로 10길 (한옥 골목)",
-        "sgg": "종로구",
-        "dong": "통의동/효자동",
-        "width_m": 3.6,
-        "car_control": 0.8,
-        "car_control_label": "보행자 안심거리",
-        "slope_pct": 2.4,
-        "shade_clean": 0.95,
-        "density_dist_m": 5.4,
-        "event_level": 0.7,
-        "event_label": "골목 갤러리 기획전 & 소품숍",
-        "cafe_interval_m": 32,
-        "events_list": [
-          "🖼️ 보안여관 아트 스페이스 기획전시",
-          "🏺 서촌 도예 작가 주말 오픈 스튜디오",
-          "☕ 통의동 한옥 북카페 낭독회"
-        ],
-        "transit_walk_min": 5.0,
-        "transit_diversity": 0.9,
-        "highlight_tag": "#대오서점 #통인시장 #한옥골목"
-      },
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.9724, 37.5776],
-          [126.9698, 37.5862]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "ikseon_dong",
-        "name": "익선동 한옥 미로거리 (수표로28길)",
+        "id": "seoul_ikseon_hanok",
+        "name": "익선동 한옥거리",
+        "province": "서울",
         "sgg": "종로구",
         "dong": "익선동",
-        "width_m": 1.8,
+        "width_m": 2.4,
         "car_control": 1.0,
-        "car_control_label": "차량 진입 불가 (미로형 골목)",
+        "car_control_label": "골목 보행전용 (차량 통행 불가)",
         "slope_pct": 0.2,
-        "shade_clean": 0.8,
-        "density_dist_m": 2.2,
-        "event_level": 0.6,
-        "event_label": "전통 공예 & 팝업",
-        "cafe_interval_m": 12,
-        "events_list": [
-          "🧵 익선동 수제 액세서리 공방 마켓",
-          "🍡 전통 디저트 팝업 부스"
-        ],
-        "transit_walk_min": 1.5,
-        "transit_diversity": 1.0,
-        "highlight_tag": "#청수당 #온천집 #한옥미로"
-      },
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.9882, 37.5732],
-          [126.9918, 37.5738]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "hannam_itaewon_ro",
-        "name": "한남동 꼼데가르송길 이면 (이태원로54길)",
-        "sgg": "용산구",
-        "dong": "한남동",
-        "width_m": 3.2,
-        "car_control": 0.6,
-        "car_control_label": "서행 생활도로",
-        "slope_pct": 5.8,
-        "shade_clean": 0.85,
-        "density_dist_m": 4.5,
+        "density_dist_m": 3.8,
         "event_level": 0.8,
-        "event_label": "브랜드 쇼룸 & 갤러리 팝업",
-        "cafe_interval_m": 24,
-        "events_list": [
-          "🎨 현대카드 스토리지 현대미술 전시",
-          "👗 해외 디자이너 브랜드 프리뷰 팝업",
-          "🥐 한남동 베이커리 페스타"
-        ],
-        "transit_walk_min": 4.5,
-        "transit_diversity": 0.85,
-        "highlight_tag": "#현대카드스토리지 #맥심플랜트 #쇼룸거리"
+        "event_label": "전통 공예 마켓 & 미식 투어",
+        "events_list": ["익선 한옥 야간 마켓", "전통 디저트 페스타"],
+        "cafe_interval_m": 12,
+        "transit_walk_min": 2.5,
+        "transit_diversity": 1.0,
+        "highlight_tag": "#청수당 #온천집 #한옥미로골목"
       },
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [127.0016, 37.5386],
-          [127.0062, 37.5332]
+          [126.9885, 37.5738],
+          [126.9898, 37.5745],
+          [126.9910, 37.5742]
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "id": "yongridan_gil",
-        "name": "신용산 용리단길 (한강대로 40길)",
-        "sgg": "용산구",
-        "dong": "한강로동",
-        "width_m": 3.0,
-        "car_control": 0.5,
-        "car_control_label": "보행자우선도로 추진구역",
-        "slope_pct": 0.9,
-        "shade_clean": 0.75,
-        "density_dist_m": 4.2,
-        "event_level": 0.6,
-        "event_label": "이색 F&B 및 테마 팝업",
-        "cafe_interval_m": 20,
-        "events_list": [
-          "🍜 용리단길 아시안 푸드 테마 팝업",
-          "🍷 골목 와인바 버스킹 나잇"
-        ],
-        "transit_walk_min": 3.0,
-        "transit_diversity": 0.95,
-        "highlight_tag": "#쌤쌤쌤 #테디뵈르하우스 #평지골목"
-      },
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.9698, 37.5302],
-          [126.9748, 37.5332]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "garosu_gil",
-        "name": "신사동 가로수길 메인스트리트",
+        "id": "seoul_apgujeong_dosan",
+        "name": "압구정 도산공원길",
+        "province": "서울",
         "sgg": "강남구",
         "dong": "신사동",
-        "width_m": 4.5,
-        "car_control": 0.3,
-        "car_control_label": "왕복 2차로 차도+인도 (차량 많음)",
-        "slope_pct": 1.5,
-        "shade_clean": 0.8,
-        "density_dist_m": 7.5,
-        "event_level": 0.7,
-        "event_label": "대형 브랜드 플래그십 팝업",
-        "cafe_interval_m": 30,
-        "events_list": [
-          "🏢 애플 가로수길 주말 Today at Apple 세션",
-          "💄 글로벌 뷰티 브랜드 대형 팝업스토어",
-          "☕ 가로수길 은행나무 테라스 위크"
-        ],
-        "transit_walk_min": 7.0,
-        "transit_diversity": 0.8,
-        "highlight_tag": "#애플가로수길 #딥티크 #넓은인도"
-      },
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [127.0208, 37.5168],
-          [127.0246, 37.5262]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "dosan_park",
-        "name": "압구정 도산공원 둘레길 (도산대로45길)",
-        "sgg": "강남구",
-        "dong": "신사동/압구정동",
-        "width_m": 4.0,
+        "width_m": 3.6,
         "car_control": 0.7,
-        "car_control_label": "공원 인접 서행구간",
-        "slope_pct": 0.8,
-        "shade_clean": 1.0,
-        "density_dist_m": 5.1,
-        "event_level": 0.85,
-        "event_label": "럭셔리 팝업 & 카페거리",
-        "cafe_interval_m": 16,
-        "events_list": [
-          "🥐 누데이크 & 탬버린즈 도산 하우스 전시",
-          "☕ 도산공원 브런치 위크",
-          "🌿 도산공원 숲길 산책 웰니스 세션"
-        ],
+        "car_control_label": "보행자 우선구역",
+        "slope_pct": 1.0,
+        "density_dist_m": 4.9,
+        "event_level": 0.95,
+        "event_label": "디자이너 플래그십 & 뷰티 팝업",
+        "events_list": ["럭셔리 패션 하우스 팝업", "도산 아트 갤러리 투어"],
+        "cafe_interval_m": 20,
         "transit_walk_min": 6.0,
-        "transit_diversity": 0.85,
+        "transit_diversity": 0.9,
         "highlight_tag": "#런던베이글뮤지엄 #누데이크 #도산공원숲"
       },
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [127.0342, 37.5231],
-          [127.0392, 37.5259]
+          [127.0345, 37.5235],
+          [127.0360, 37.5248],
+          [127.0375, 37.5255]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "busan_gunam_ro",
+        "name": "부산 해운대 구남로 보행문화광장",
+        "province": "부산",
+        "sgg": "해운대구",
+        "dong": "우동",
+        "width_m": 6.5,
+        "car_control": 1.0,
+        "car_control_label": "완전 보행전용 광장거리 (차량 차단)",
+        "slope_pct": 0.4,
+        "density_dist_m": 5.1,
+        "event_level": 1.0,
+        "event_label": "주말 버스킹존 & 해변 음악축제",
+        "events_list": ["구남로 야외 버스킹 상설공연", "해운대 아트마켓", "모래축제 연계 팝업"],
+        "cafe_interval_m": 16,
+        "transit_walk_min": 1.5,
+        "transit_diversity": 1.0,
+        "highlight_tag": "#해운대광장 #야외버스킹 #초역세권광폭보도"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [129.1585, 37.5600],
+          [129.1598, 37.5615],
+          [129.1610, 37.5630]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "busan_jeonpo_cafe",
+        "name": "부산 서면 전포 카페거리",
+        "province": "부산",
+        "sgg": "부산진구",
+        "dong": "전포동",
+        "width_m": 3.5,
+        "car_control": 0.8,
+        "car_control_label": "보행자 안심구역 (차량 서행)",
+        "slope_pct": 1.5,
+        "density_dist_m": 4.9,
+        "event_level": 0.9,
+        "event_label": "전포 커피축제 & 디자인 소품마켓",
+        "events_list": ["전포 골목 커피 페스티벌", "청년 디자이너 굿즈 팝업"],
+        "cafe_interval_m": 14,
+        "transit_walk_min": 4.0,
+        "transit_diversity": 0.95,
+        "highlight_tag": "#전리단길 #뉴욕타임스선정 #감성카페골목"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [129.0645, 35.1550],
+          [129.0660, 35.1565],
+          [129.0675, 35.1580]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "busan_huinnyeoul",
+        "name": "부산 영도 흰여울문화마을 해안길",
+        "province": "부산",
+        "sgg": "영도구",
+        "dong": "영선동4가",
+        "width_m": 2.8,
+        "car_control": 1.0,
+        "car_control_label": "해안절벽 보행전용로 (차량 진입 불가)",
+        "slope_pct": 2.5,
+        "density_dist_m": 5.4,
+        "event_level": 0.85,
+        "event_label": "오션뷰 갤러리 & 야외 예술전시",
+        "events_list": ["흰여울 해안 예술제", "바다노을 골목 사진전"],
+        "cafe_interval_m": 24,
+        "transit_walk_min": 7.0,
+        "transit_diversity": 0.8,
+        "highlight_tag": "#흰여울문화마을 #오션뷰산책로 #한국의산토리니"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [129.0435, 35.0780],
+          [129.0450, 35.0795],
+          [129.0470, 35.0810]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "daegu_dongseong_ro",
+        "name": "대구 동성로 차없는거리",
+        "province": "대구",
+        "sgg": "중구",
+        "dong": "동성로2가",
+        "width_m": 5.5,
+        "car_control": 1.0,
+        "car_control_label": "완전 보행자 전용거리 (차량 진입 차단)",
+        "slope_pct": 0.3,
+        "density_dist_m": 4.7,
+        "event_level": 1.0,
+        "event_label": "동성로 축제 & 야외 상설 버스킹",
+        "events_list": ["동성로 청년 버스킹 페스티벌", "도심 플리마켓"],
+        "cafe_interval_m": 15,
+        "transit_walk_min": 2.0,
+        "transit_diversity": 1.0,
+        "highlight_tag": "#스파크랜드 #차없는거리 #대구최대보행로"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [128.5940, 35.8690],
+          [128.5960, 35.8705],
+          [128.5980, 35.8720]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "daegu_kimgwangseok_ro",
+        "name": "대구 김광석 다시그리기길",
+        "province": "대구",
+        "sgg": "중구",
+        "dong": "대봉동",
+        "width_m": 3.8,
+        "car_control": 1.0,
+        "car_control_label": "음악문화 보행전용길",
+        "slope_pct": 0.5,
+        "density_dist_m": 5.1,
+        "event_level": 0.95,
+        "event_label": "거리 어쿠스틱 콘서트 & 벽화거리",
+        "events_list": ["김광석 음악 버스킹 콘서트", "대봉동 예술 마켓"],
+        "cafe_interval_m": 19,
+        "transit_walk_min": 5.0,
+        "transit_diversity": 0.9,
+        "highlight_tag": "#김광석길 #감성벽화거리 #통기타버스킹"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [128.6050, 35.8600],
+          [128.6065, 35.8620],
+          [128.6080, 35.8635]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "incheon_openport",
+        "name": "인천 개항장 문화거리",
+        "province": "인천",
+        "sgg": "중구",
+        "dong": "신포동",
+        "width_m": 3.6,
+        "car_control": 0.85,
+        "car_control_label": "역사문화 보행안전거리",
+        "slope_pct": 1.2,
+        "density_dist_m": 5.3,
+        "event_level": 0.9,
+        "event_label": "개항장 야행 축제 & 근대건축 투어",
+        "events_list": ["인천 개항장 문화유산 야행", "신포 청년 마켓"],
+        "cafe_interval_m": 25,
+        "transit_walk_min": 4.5,
+        "transit_diversity": 0.95,
+        "highlight_tag": "#신포시장 #개항장문화지구 #근대역사골목"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [126.6210, 37.4720],
+          [126.6235, 37.4735],
+          [126.6260, 37.4745]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "incheon_songdo_park",
+        "name": "인천 송도 센트럴파크 보행산책로",
+        "province": "인천",
+        "sgg": "연수구",
+        "dong": "송도동",
+        "width_m": 5.0,
+        "car_control": 1.0,
+        "car_control_label": "수변공원 완전 보행전용길",
+        "slope_pct": 0.2,
+        "density_dist_m": 5.2,
+        "event_level": 0.85,
+        "event_label": "주말 수변 버스킹 & 야간 조명쇼",
+        "events_list": ["센트럴파크 보트축제", "송도 달빛 공원 페스타"],
+        "cafe_interval_m": 35,
+        "transit_walk_min": 3.5,
+        "transit_diversity": 0.9,
+        "highlight_tag": "#트라이보울 #송도한옥마을 #해수공원워킹"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [126.6340, 37.3910],
+          [126.6380, 37.3935],
+          [126.6420, 37.3960]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "daejeon_sungsimdang_street",
+        "name": "대전 성심당 문화의거리 (은행동)",
+        "province": "대전",
+        "sgg": "중구",
+        "dong": "은행동",
+        "width_m": 5.2,
+        "car_control": 1.0,
+        "car_control_label": "스카이로드 차없는거리 (완전 보행)",
+        "slope_pct": 0.2,
+        "density_dist_m": 4.6,
+        "event_level": 0.95,
+        "event_label": "스카이로드 영상쇼 & 빵축제",
+        "events_list": ["대전 빵축제 연계 팝업", "으능정이 청년 페스티벌"],
+        "cafe_interval_m": 12,
+        "transit_walk_min": 3.0,
+        "transit_diversity": 1.0,
+        "highlight_tag": "#성심당본점 #으능정이거리 #스카이로드"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [127.4265, 36.3265],
+          [127.4280, 36.3280],
+          [127.4295, 36.3295]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gwangju_dongmyeong_cafe",
+        "name": "광주 동명동 카페거리",
+        "province": "광주",
+        "sgg": "동구",
+        "dong": "동명동",
+        "width_m": 3.6,
+        "car_control": 0.8,
+        "car_control_label": "보행자 우선구역",
+        "slope_pct": 0.6,
+        "density_dist_m": 5.0,
+        "event_level": 0.9,
+        "event_label": "ACC 연계 디자인 마켓 & 팝업",
+        "events_list": ["동명 커피 페스티벌", "국립아시아문화전당 청년마켓"],
+        "cafe_interval_m": 16,
+        "transit_walk_min": 4.5,
+        "transit_diversity": 0.95,
+        "highlight_tag": "#동리단길 #아시아문화전당 #감성주택개조카페"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [126.9240, 35.1480],
+          [126.9265, 35.1495],
+          [126.9290, 35.1510]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "jeonju_hanok_taejo",
+        "name": "전주 한옥마을 태조로",
+        "province": "전북",
+        "sgg": "전주시",
+        "dong": "교동",
+        "width_m": 6.0,
+        "car_control": 1.0,
+        "car_control_label": "주말 차없는거리 (완전 보행전용)",
+        "slope_pct": 0.2,
+        "density_dist_m": 4.9,
+        "event_level": 1.0,
+        "event_label": "전주 야행 & 전통 공예 플리마켓",
+        "events_list": ["전주 한옥마을 경기전 야행", "전통 디저트 마켓"],
+        "cafe_interval_m": 14,
+        "transit_walk_min": 5.5,
+        "transit_diversity": 0.9,
+        "highlight_tag": "#경기전 #전동성당 #국내최대한옥보행길"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [127.1480, 35.8140],
+          [127.1510, 35.8150],
+          [127.1540, 35.8160]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gangwon_gangneung_anmok",
+        "name": "강릉 안목해변 커피거리",
+        "province": "강원",
+        "sgg": "강릉시",
+        "dong": "견소동",
+        "width_m": 4.2,
+        "car_control": 0.85,
+        "car_control_label": "해변 테마 보행데크로드",
+        "slope_pct": 0.3,
+        "density_dist_m": 5.2,
+        "event_level": 0.95,
+        "event_label": "강릉 커피축제 & 오션뷰 마켓",
+        "events_list": ["강릉 커피축제 해변 버스킹", "바다 플리마켓"],
+        "cafe_interval_m": 15,
+        "transit_walk_min": 6.0,
+        "transit_diversity": 0.85,
+        "highlight_tag": "#안목해변 #오션뷰카페거리 #커피성지"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [128.9460, 37.7710],
+          [128.9480, 37.7725],
+          [128.9500, 37.7740]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "jeju_topdong_coast",
+        "name": "제주 탑동 테마해안거리",
+        "province": "제주",
+        "sgg": "제주시",
+        "dong": "삼도2동",
+        "width_m": 5.5,
+        "car_control": 1.0,
+        "car_control_label": "해안 광장 보행전용로",
+        "slope_pct": 0.1,
+        "density_dist_m": 5.3,
+        "event_level": 0.9,
+        "event_label": "탑동 해변 야외공연 & 플리마켓",
+        "events_list": ["제주 탑동 야외 버스킹", "동문시장 연계 야간 마켓"],
+        "cafe_interval_m": 28,
+        "transit_walk_min": 4.0,
+        "transit_diversity": 0.9,
+        "highlight_tag": "#아라리오뮤지엄 #제주바다산책로 #동문시장인접"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [126.5240, 33.5180],
+          [126.5270, 33.5190],
+          [126.5300, 33.5200]
         ]
       }
     }
