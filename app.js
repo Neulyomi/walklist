@@ -28,7 +28,7 @@ const weightEveInput = document.getElementById('weightEve');
 const weightTraInput = document.getElementById('weightTra');
 const resetWeightsBtn = document.getElementById('resetWeightsBtn');
 
-// Nav Action Buttons
+// Nav Action Buttons & Modals
 const btnPinpointMode = document.getElementById('btnPinpointMode');
 const pinpointBanner = document.getElementById('pinpointBanner');
 const pinpointStepText = document.getElementById('pinpointStepText');
@@ -37,7 +37,10 @@ const btnOpenCompare = document.getElementById('btnOpenCompare');
 const btnOpenSaved = document.getElementById('btnOpenSaved');
 const savedCountBadge = document.getElementById('savedCountBadge');
 
-// Modals
+const btnOpenSelectionInfo = document.getElementById('btnOpenSelectionInfo');
+const selectionModal = document.getElementById('selectionModal');
+const btnCloseSelection = document.getElementById('btnCloseSelection');
+
 const compareModal = document.getElementById('compareModal');
 const btnCloseCompare = document.getElementById('btnCloseCompare');
 const compareSelectA = document.getElementById('compareSelectA');
@@ -447,6 +450,15 @@ closeSidebarBtn.addEventListener('click', () => {
   detailSidebar.classList.remove('open');
   activeFeatureId = null;
   document.querySelectorAll('.ranking-card').forEach(c => c.classList.remove('active'));
+});
+
+// Selection Info Modal Event
+btnOpenSelectionInfo.addEventListener('click', () => {
+  selectionModal.classList.remove('hidden');
+});
+
+btnCloseSelection.addEventListener('click', () => {
+  selectionModal.classList.add('hidden');
 });
 
 // ==========================================

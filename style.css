@@ -75,7 +75,7 @@ body {
 .brand-text p {
   font-size: 0.72rem;
   color: var(--text-muted);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .nav-actions {
@@ -187,6 +187,15 @@ body {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 8px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ranking-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
 }
 
 .ranking-title {
@@ -195,12 +204,45 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
+  white-space: nowrap;
 }
 
 .trophy-icon {
   width: 18px;
   height: 18px;
   color: #f59e0b;
+}
+
+/* Compact Clean Selection Info Badge Button */
+.btn-selection-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.btn-selection-info:hover {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #93c5fd;
+  transform: translateY(-1px);
+}
+
+.btn-selection-info svg {
+  width: 12px;
+  height: 12px;
+  color: #3b82f6;
 }
 
 .ranking-hint {
@@ -655,16 +697,6 @@ body {
   gap: 8px;
 }
 
-.badge-realtime {
-  font-size: 0.7rem;
-  background: #ecfdf5;
-  color: #059669;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-weight: 700;
-  border: 1px solid #a7f3d0;
-}
-
 .btn-reset {
   display: flex;
   align-items: center;
@@ -845,7 +877,7 @@ body {
   line-height: 1.4;
 }
 
-/* === MODALS (Compare & Saved) === */
+/* === MODALS (Selection Info, Compare & Saved) === */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -872,6 +904,10 @@ body {
   max-height: 85vh;
   overflow: hidden;
   animation: modalPop 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.selection-modal-card {
+  width: 560px;
 }
 
 .compare-modal-card {
@@ -915,6 +951,57 @@ body {
 .btn-modal-close:hover {
   background: #f1f5f9;
   color: #0f172a;
+}
+
+/* Selection Info Modal Body */
+.selection-modal-body {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.selection-intro {
+  font-size: 0.85rem;
+  color: #334155;
+  line-height: 1.5;
+  background: #f8fafc;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 16px;
+}
+
+.selection-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  padding: 12px 14px;
+  border-radius: 10px;
+}
+
+.step-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.step-desc h4 {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 3px;
+}
+
+.step-desc p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.4;
 }
 
 /* Compare Selectors */
@@ -1087,7 +1174,7 @@ body {
   .detail-sidebar {
     width: calc(100% - 32px);
   }
-  .compare-modal-card {
+  .compare-modal-card, .selection-modal-card {
     width: 100%;
   }
 }

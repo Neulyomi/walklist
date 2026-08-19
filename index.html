@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>걷기 좋은 동네 — 대낮에 걷기 좋은 거리 발굴 맵</title>
+  <title>걷기 좋은 동네 — 편하게 걷기 좋은 거리 찾기</title>
   
   <!-- Pretendard Font -->
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -26,7 +26,7 @@
         <div class="logo-icon"><i data-lucide="footprints"></i></div>
         <div class="brand-text">
           <h1>걷기 좋은 동네</h1>
-          <p>대낮에 걷기 좋은 거리 발굴 맵</p>
+          <p>편하게 걷기 좋은 거리 찾기</p>
         </div>
       </div>
 
@@ -81,10 +81,10 @@
             <i data-lucide="trophy" class="trophy-icon"></i>
             <span id="rankingRegionLabel">전체</span> 걷기 좋은 거리 Top 10
           </div>
-          <!-- How Streets Were Selected Button -->
-          <button id="btnOpenSelectionInfo" class="btn-selection-info">
+          <!-- Compact Clean Selection Info Badge Button -->
+          <button id="btnOpenSelectionInfo" class="btn-selection-info" title="거리 선정 기준 보기">
             <i data-lucide="help-circle"></i>
-            <span>거리는 어떻게 선정되었나요?</span>
+            <span>거리 선정에 대해</span>
           </button>
         </div>
         <span class="ranking-hint">카드를 클릭하면 좌측 5단계 분석창과 함께 해당 거리로 이동합니다</span>
@@ -248,7 +248,7 @@
     <div id="selectionModal" class="modal-backdrop hidden">
       <div class="modal-card selection-modal-card">
         <div class="modal-header">
-          <div class="modal-title"><i data-lucide="compass"></i> 거리는 어떻게 선정되었나요?</div>
+          <div class="modal-title"><i data-lucide="compass"></i> 거리 선정 기준 안내</div>
           <button class="btn-modal-close" id="btnCloseSelection"><i data-lucide="x"></i></button>
         </div>
         <div class="selection-modal-body">
@@ -267,7 +267,7 @@
               <div class="step-icon">2️⃣</div>
               <div class="step-desc">
                 <h4>4대 핵심 지표 다차원 평가</h4>
-                <p><strong>3.5m+ 유효 보도폭</strong>, <strong>5m 골든존 인구밀도(E.T. Hall 근접학)</strong>, <strong>주말 팝업·플리마켓</strong>, <strong>지하철 도보 5분 역세권</strong> 데이터를 종합 분석합니다.</p>
+                <p><strong>3.5m+ 유효 보도폭</strong>, <strong>5m 골든존 인구밀도(E.T. Hall 근접학)</strong>, <strong>주말 팝업·공연</strong>, <strong>지하철 도보 5분 역세권</strong> 데이터를 종합 분석합니다.</p>
               </div>
             </div>
             <div class="step-item">
