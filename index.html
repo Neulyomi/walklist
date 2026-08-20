@@ -111,6 +111,7 @@
 
       <!-- Left Detail Sidebar (5-Tier Step Rating Inspector) -->
       <aside class="detail-sidebar" id="detailSidebar">
+        <div class="sidebar-drag-handle"></div>
         <button class="btn-close-sidebar" id="closeSidebarBtn" title="닫기">
           <i data-lucide="x"></i>
         </button>
@@ -121,123 +122,35 @@
 
     </main>
 
-    <!-- 4. Bottom Custom Weight Panel with Individual Formula Dropdowns -->
-    <footer class="custom-panel">
-      <div class="panel-header">
-        <div class="panel-title">
-          <i data-lucide="sliders" class="panel-icon"></i>
-          <span>나만의 걷기 기준 설정</span>
+    <!-- 4. Bottom Preset Chips Bar -->
+    <footer class="custom-panel-presets">
+      <div class="presets-container">
+        <div class="preset-label">
+          <i data-lucide="sparkles" class="preset-icon"></i>
+          <span>나의 걷기 스타일:</span>
         </div>
-        <button id="resetWeightsBtn" class="btn-reset">
-          <i data-lucide="rotate-ccw"></i> 기본값 초기화
+        <div class="preset-buttons-group">
+          <button class="btn-preset-chip active" data-preset="balance">
+            <span class="chip-emoji">⚖️</span>
+            <span class="chip-text">기본 밸런스</span>
+          </button>
+          <button class="btn-preset-chip" data-preset="healing">
+            <span class="chip-emoji">🧘</span>
+            <span class="chip-text">1. 조용한 힐링</span>
+          </button>
+          <button class="btn-preset-chip" data-preset="cafe">
+            <span class="chip-emoji">☕</span>
+            <span class="chip-text">2. 감성 카페탐방</span>
+          </button>
+          <button class="btn-preset-chip" data-preset="shopping">
+            <span class="chip-emoji">🛍️</span>
+            <span class="chip-text">3. 활기찬 아이쇼핑</span>
+          </button>
+        </div>
+        <button id="btnOpenCustomWeights" class="btn-custom-weights" title="세부 가중치 직접 조절">
+          <i data-lucide="sliders"></i>
+          <span>세부 조절</span>
         </button>
-      </div>
-
-      <div class="weight-inputs-grid">
-        
-        <!-- 1. 도보 환경 -->
-        <div class="weight-card" style="--accent-color: #10b981;">
-          <div class="weight-card-top">
-            <div class="weight-label">
-              <span class="category-icon">🌿</span>
-              <span class="category-name">도보 환경</span>
-            </div>
-            <div class="input-wrapper">
-              <input type="number" id="weightEnv" class="weight-input" value="35" min="0" max="100" step="5">
-              <span class="unit">점</span>
-            </div>
-          </div>
-          <p class="weight-desc">길이 넓고 차가 적어요</p>
-          <button class="btn-calc-toggle" data-target="calc-env">
-            <span>ℹ️ 수집 데이터 출처 & 계산 방식</span>
-            <i data-lucide="chevron-down"></i>
-          </button>
-          <div class="calc-box" id="calc-env">
-            <div class="calc-source-tag">📌 <strong>데이터 출처:</strong> 국토교통부 국가공간정보포털(NSDI) 도로명주소 전자지도 / 보행자우선도로 지정 고시</div>
-            <div class="calc-paper-tag">📚 <strong>관련 논문:</strong> Jan Gehl(2010) 《Life Between Buildings》, 서울연구원(2018) 《보행자 우선도로 조성에 따른 만족도 연구》</div>
-            <code>Score_env = 0.35 × 폭 + 0.35 × 차량통제 + 0.30 × 경사</code>
-            <p>• <strong>유효 보도폭:</strong> 3.5m 이상(1.0 만점), 2.5~3.5m(0.8), 1.5~2.5m(0.5), 1.5m 미만(0.1)<br>
-               • <strong>차량 통제:</strong> 보행전용로(1.0), 보행자우선도로(0.8), 생활도로(0.5), 보차혼용(0.2)<br>
-               • <strong>지형 평지성:</strong> 경사 3% 미만 평지(1.0), 5%(0.8), 8% 초과 급경사(0.0)</p>
-          </div>
-        </div>
-
-        <!-- 2. 인구밀도 -->
-        <div class="weight-card" style="--accent-color: #3b82f6;">
-          <div class="weight-card-top">
-            <div class="weight-label">
-              <span class="category-icon">👥</span>
-              <span class="category-name">인구밀도</span>
-            </div>
-            <div class="input-wrapper">
-              <input type="number" id="weightPop" class="weight-input" value="25" min="0" max="100" step="5">
-              <span class="unit">점</span>
-            </div>
-          </div>
-          <p class="weight-desc">사람이 적당히 있어 활기차요</p>
-          <button class="btn-calc-toggle" data-target="calc-pop">
-            <span>ℹ️ 수집 데이터 출처 & 계산 방식</span>
-            <i data-lucide="chevron-down"></i>
-          </button>
-          <div class="calc-box" id="calc-pop">
-            <div class="calc-source-tag">📌 <strong>데이터 출처:</strong> 통계청 SGIS 100m 격자 생활유동인구 / 공공데이터포털 전국 이동통신 생활인구(대낮 11~17시)</div>
-            <div class="calc-paper-tag">📚 <strong>관련 논문:</strong> Edward T. Hall(1966) 《The Hidden Dimension》 근접학, John J. Fruin(1971) 《Pedestrian Planning and Design》 LOS A/B</div>
-            <code>Score_pop = exp( - (d - 5.0m)² / (2 × 1.8²) )</code>
-            <p>• <strong>5m 골든존 가우시안 곡선:</strong> 1인당 점유면적 기반 사람 간격 $d$가 <strong>4.5~5.5m(5m 스위트스팟)</strong>일 때 1.0 만점.<br>
-               • 1.5m 미만(과밀) 및 15m 이상(적막) 시 곡선 감점 적용.</p>
-          </div>
-        </div>
-
-        <!-- 3. 이벤트 -->
-        <div class="weight-card" style="--accent-color: #f59e0b;">
-          <div class="weight-card-top">
-            <div class="weight-label">
-              <span class="category-icon">🎪</span>
-              <span class="category-name">이벤트</span>
-            </div>
-            <div class="input-wrapper">
-              <input type="number" id="weightEve" class="weight-input" value="20" min="0" max="100" step="5">
-              <span class="unit">점</span>
-            </div>
-          </div>
-          <p class="weight-desc">팝업·공연 등 다채로운 볼거리가 열려요</p>
-          <button class="btn-calc-toggle" data-target="calc-eve">
-            <span>ℹ️ 수집 데이터 출처 & 계산 방식</span>
-            <i data-lucide="chevron-down"></i>
-          </button>
-          <div class="calc-box" id="calc-eve">
-            <div class="calc-source-tag">📌 <strong>데이터 출처:</strong> 문화체육관광부 한국문화정보원(문화포털) API / 지자체 축제·플리마켓·팝업 인허가 DB</div>
-            <div class="calc-paper-tag">📚 <strong>관련 논문:</strong> Jane Jacobs(1961) 《The Death and Life of Great American Cities》, 국토연구원(2020) 《팝업스토어 및 문화마켓 집객효과》</div>
-            <code>Score_eve = Clamp( Events_3months / 3, 0.0, 1.0 )</code>
-            <p>• <strong>주말 플리마켓 & 팝업스토어:</strong> 최근 3개월 내 3건 이상 개최(1.0 만점), 2건(0.7), 1건(0.4), 없음(0.0)</p>
-          </div>
-        </div>
-
-        <!-- 4. 대중교통 -->
-        <div class="weight-card" style="--accent-color: #8b5cf6;">
-          <div class="weight-card-top">
-            <div class="weight-label">
-              <span class="category-icon">🚌</span>
-              <span class="category-name">대중교통</span>
-            </div>
-            <div class="input-wrapper">
-              <input type="number" id="weightTra" class="weight-input" value="20" min="0" max="100" step="5">
-              <span class="unit">점</span>
-            </div>
-          </div>
-          <p class="weight-desc">지하철역이 가깝고 버스가 많아요</p>
-          <button class="btn-calc-toggle" data-target="calc-tra">
-            <span>ℹ️ 수집 데이터 출처 & 계산 방식</span>
-            <i data-lucide="chevron-down"></i>
-          </button>
-          <div class="calc-box" id="calc-tra">
-            <div class="calc-source-tag">📌 <strong>데이터 출처:</strong> 국토교통부 대중교통정보센터(TAGO) 전국 버스정류장·노선 / 국가철도공단 역사 출구 위치</div>
-            <div class="calc-paper-tag">📚 <strong>관련 논문:</strong> Peter Calthorpe(1993) 《The Next American Metropolis》 TOD 보행권, 대한교통학회지(2019) 《대중교통 접근성과 다핵 노선망 영향》</div>
-            <code>Score_tra = (1 - WalkMin / 15) × (0.5 × Dest / 3 + 0.5 × H_entropy)</code>
-            <p>• <strong>도보 역세권:</strong> 도보 5분 컷(1.0 만점), 10분(0.7), 15분(0.4)에 도심 직결 버스 노선 섀넌 엔트로피 다양성($H$) 가점 결합.</p>
-          </div>
-        </div>
-
       </div>
     </footer>
 
@@ -316,6 +229,122 @@
         </div>
         <div class="saved-list" id="savedRoutesList">
           <!-- Dynamically populated saved routes list -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Custom Weights & Formulas Modal -->
+    <div id="customWeightModal" class="modal-backdrop hidden">
+      <div class="modal-card weight-modal-card">
+        <div class="modal-header">
+          <div class="modal-title"><i data-lucide="sliders"></i> 4대 핵심 지표 가중치 직접 조절</div>
+          <button class="btn-modal-close" id="btnCloseCustomWeight"><i data-lucide="x"></i></button>
+        </div>
+        
+        <div class="weight-modal-body">
+          <div class="weight-modal-desc">
+            나만의 기준에 맞춰 4대 지표의 중요도를 조절하면, 점수와 순위가 실시간으로 재계산됩니다.
+          </div>
+          
+          <div class="weight-inputs-grid">
+            <!-- 1. 도보 환경 -->
+            <div class="weight-card" style="--accent-color: #10b981;">
+              <div class="weight-card-top">
+                <div class="weight-label">
+                  <span class="category-icon">🌿</span>
+                  <span class="category-name">도보 환경</span>
+                </div>
+                <div class="input-wrapper">
+                  <input type="number" id="weightEnv" class="weight-input" value="35" min="0" max="100" step="5">
+                  <span class="unit">점</span>
+                </div>
+              </div>
+              <p class="weight-desc">길이 넓고 차가 적어요</p>
+              <button class="btn-calc-toggle" data-target="calc-env">
+                <span>ℹ️ 계산 방식 & 출처</span>
+                <i data-lucide="chevron-down"></i>
+              </button>
+              <div class="calc-box" id="calc-env">
+                <div class="calc-source-tag">📌 국토부 국가공간정보포털(NSDI) 전자지도</div>
+                <code>Score_env = 0.35×폭 + 0.35×차량통제 + 0.30×경사</code>
+              </div>
+            </div>
+
+            <!-- 2. 인구밀도 -->
+            <div class="weight-card" style="--accent-color: #3b82f6;">
+              <div class="weight-card-top">
+                <div class="weight-label">
+                  <span class="category-icon">👥</span>
+                  <span class="category-name">인구밀도</span>
+                </div>
+                <div class="input-wrapper">
+                  <input type="number" id="weightPop" class="weight-input" value="25" min="0" max="100" step="5">
+                  <span class="unit">점</span>
+                </div>
+              </div>
+              <p class="weight-desc">사람이 적당히 있어 쾌적해요</p>
+              <button class="btn-calc-toggle" data-target="calc-pop">
+                <span>ℹ️ 계산 방식 & 출처</span>
+                <i data-lucide="chevron-down"></i>
+              </button>
+              <div class="calc-box" id="calc-pop">
+                <div class="calc-source-tag">📌 통계청 SGIS 100m 격자 생활인구</div>
+                <code>5m 골든존 가우시안 곡선 모델 (E.T. Hall 근접학)</code>
+              </div>
+            </div>
+
+            <!-- 3. 이벤트 -->
+            <div class="weight-card" style="--accent-color: #f59e0b;">
+              <div class="weight-card-top">
+                <div class="weight-label">
+                  <span class="category-icon">🎪</span>
+                  <span class="category-name">이벤트</span>
+                </div>
+                <div class="input-wrapper">
+                  <input type="number" id="weightEve" class="weight-input" value="20" min="0" max="100" step="5">
+                  <span class="unit">점</span>
+                </div>
+              </div>
+              <p class="weight-desc">팝업·공연 등 볼거리가 열려요</p>
+              <button class="btn-calc-toggle" data-target="calc-eve">
+                <span>ℹ️ 계산 방식 & 출처</span>
+                <i data-lucide="chevron-down"></i>
+              </button>
+              <div class="calc-box" id="calc-eve">
+                <div class="calc-source-tag">📌 문체부 문화포털 API / 지자체 인허가 DB</div>
+                <code>최근 3개월 주말 플리마켓·팝업 개최 빈도</code>
+              </div>
+            </div>
+
+            <!-- 4. 대중교통 -->
+            <div class="weight-card" style="--accent-color: #8b5cf6;">
+              <div class="weight-card-top">
+                <div class="weight-label">
+                  <span class="category-icon">🚌</span>
+                  <span class="category-name">대중교통</span>
+                </div>
+                <div class="input-wrapper">
+                  <input type="number" id="weightTra" class="weight-input" value="20" min="0" max="100" step="5">
+                  <span class="unit">점</span>
+                </div>
+              </div>
+              <p class="weight-desc">지하철역이 가깝고 버스가 많아요</p>
+              <button class="btn-calc-toggle" data-target="calc-tra">
+                <span>ℹ️ 계산 방식 & 출처</span>
+                <i data-lucide="chevron-down"></i>
+              </button>
+              <div class="calc-box" id="calc-tra">
+                <div class="calc-source-tag">📌 국토교통부 TAGO 전국 버스·지하철역</div>
+                <code>도보 5분 컷 역세권 + 버스 노선 다양성 지수</code>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:flex-end; margin-top: 20px;">
+            <button id="resetWeightsBtn" class="btn-reset">
+              <i data-lucide="rotate-ccw"></i> 기본값(35:25:20:20)으로 초기화
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -21,6 +21,14 @@ const defaultWeights = {
   tra: 20
 };
 
+// Walking Style Presets Definition
+const walkingPresets = {
+  balance: { env: 35, pop: 25, eve: 20, tra: 20, name: '기본 밸런스' },
+  healing: { env: 45, pop: 40, eve: 5, tra: 10, name: '1. 조용한 힐링' },
+  cafe: { env: 15, pop: 20, eve: 40, tra: 25, name: '2. 감성 카페탐방' },
+  shopping: { env: 10, pop: 15, eve: 45, tra: 30, name: '3. 활기찬 아이쇼핑' }
+};
+
 // Regional Centers for Map Navigation
 const regionCenters = {
   'ALL': { center: [127.8, 36.0], zoom: 6.8 },
@@ -45,6 +53,12 @@ const weightPopInput = document.getElementById('weightPop');
 const weightEveInput = document.getElementById('weightEve');
 const weightTraInput = document.getElementById('weightTra');
 const resetWeightsBtn = document.getElementById('resetWeightsBtn');
+
+// Preset Chips DOM
+const presetChips = document.querySelectorAll('.btn-preset-chip');
+const btnOpenCustomWeights = document.getElementById('btnOpenCustomWeights');
+const customWeightModal = document.getElementById('customWeightModal');
+const btnCloseCustomWeight = document.getElementById('btnCloseCustomWeight');
 
 // Nav Action Buttons & Modals
 const btnGeoLocate = document.getElementById('btnGeoLocate');
@@ -184,21 +198,38 @@ async function loadGeoJSON() {
   }
 }
 
-// 3. Generate Clean Smooth Dong Walkable Area Circle Polygon
+// 3. Generate Natural Organic Walkshed Blob (Harmonic Multi-wave Curve)
 function generateDongWalkableAreaGeoJSON(feature) {
   const center = feature.geometry.coordinates; // [lng, lat]
-  const radiusM = feature.properties.radius_m || 220;
+  const radiusM = feature.properties.radius_m || 240;
 
-  // Convert meters to approximate lat/lng delta
-  const latDelta = radiusM / 111320;
-  const lngDelta = radiusM / (111320 * Math.cos(center[1] * Math.PI / 180));
+  // Base lat/lng deltas
+  const baseLatDelta = radiusM / 111320;
+  const baseLngDelta = radiusM / (111320 * Math.cos(center[1] * Math.PI / 180));
+
+  // Deterministic seed based on feature id string
+  let seed = 0;
+  const idStr = feature.properties.id || 'seed';
+  for (let s = 0; s < idStr.length; s++) {
+    seed += idStr.charCodeAt(s);
+  }
+  const phase1 = (seed % 10) * 0.6;
+  const phase2 = (seed % 7) * 0.9;
+  const phase3 = (seed % 5) * 1.2;
 
   const points = [];
-  const numSides = 32;
+  const numSides = 48; // Smooth organic curve
   for (let i = 0; i < numSides; i++) {
     const angle = (i / numSides) * 2 * Math.PI;
-    const lng = center[0] + lngDelta * Math.cos(angle);
-    const lat = center[1] + latDelta * Math.sin(angle);
+
+    // Harmonic wave modulation to create natural, non-circular pedestrian walkshed
+    const wave = 1.0 +
+      0.18 * Math.sin(2 * angle + phase1) +
+      0.12 * Math.cos(3 * angle + phase2) +
+      0.06 * Math.sin(5 * angle + phase3);
+
+    const lng = center[0] + baseLngDelta * wave * Math.cos(angle);
+    const lat = center[1] + baseLatDelta * wave * Math.sin(angle);
     points.push([lng, lat]);
   }
   points.push(points[0]); // close loop
@@ -1074,9 +1105,36 @@ function renderCompareMatrix() {
   `;
 }
 
-// 14. Event Listeners for Custom Weight Inputs
+// 14. Event Listeners for Custom Weight Inputs & Presets
+presetChips.forEach(chip => {
+  chip.addEventListener('click', () => {
+    presetChips.forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+
+    const presetKey = chip.getAttribute('data-preset');
+    const preset = walkingPresets[presetKey];
+    if (preset) {
+      weightEnvInput.value = preset.env;
+      weightPopInput.value = preset.pop;
+      weightEveInput.value = preset.eve;
+      weightTraInput.value = preset.tra;
+      recalculateAll();
+    }
+  });
+});
+
+btnOpenCustomWeights.addEventListener('click', () => {
+  customWeightModal.classList.remove('hidden');
+});
+
+btnCloseCustomWeight.addEventListener('click', () => {
+  customWeightModal.classList.add('hidden');
+});
+
 [weightEnvInput, weightPopInput, weightEveInput, weightTraInput].forEach(input => {
   input.addEventListener('input', () => {
+    // Deselect preset chips when user manually tweaks
+    presetChips.forEach(c => c.classList.remove('active'));
     recalculateAll();
   });
 });
@@ -1086,6 +1144,11 @@ resetWeightsBtn.addEventListener('click', () => {
   weightPopInput.value = defaultWeights.pop;
   weightEveInput.value = defaultWeights.eve;
   weightTraInput.value = defaultWeights.tra;
+  
+  presetChips.forEach(c => c.classList.remove('active'));
+  const balanceChip = document.querySelector('[data-preset="balance"]');
+  if (balanceChip) balanceChip.classList.add('active');
+
   recalculateAll();
 });
 
@@ -1132,6 +1195,28 @@ document.querySelectorAll('.btn-calc-toggle').forEach(btn => {
     }
   });
 });
+
+// Mobile Bottom Sheet Drag Handle Swipe to Close
+const sidebarDragHandle = document.querySelector('.sidebar-drag-handle');
+if (sidebarDragHandle) {
+  let touchStartY = 0;
+  sidebarDragHandle.addEventListener('touchstart', (e) => {
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  sidebarDragHandle.addEventListener('touchmove', (e) => {
+    const touchY = e.touches[0].clientY;
+    if (touchY - touchStartY > 60) {
+      detailSidebar.classList.remove('open');
+      activeFeatureId = null;
+      document.querySelectorAll('.ranking-card').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.dong-map-chip').forEach(m => m.classList.remove('active'));
+      if (map && map.getSource('selected-dong-src')) {
+        map.getSource('selected-dong-src').setData({ type: 'FeatureCollection', features: [] });
+      }
+    }
+  }, { passive: true });
+}
 
 window.addEventListener('DOMContentLoaded', () => {
   initMap();

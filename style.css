@@ -747,49 +747,129 @@ body {
 .color-orange { background: #f97316; }
 .color-red { background: #ef4444; }
 
-/* === 4. Bottom Custom Weight Panel === */
-.custom-panel {
+/* === 4. Bottom Preset Chips Bar === */
+.custom-panel-presets {
   background: #ffffff;
   border-top: 1px solid var(--border-color);
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
-  padding: 14px 24px;
+  box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.04);
+  padding: 10px 24px;
   z-index: 20;
 }
 
-.panel-header {
+.presets-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  gap: 16px;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-.panel-title {
-  font-size: 0.95rem;
-  font-weight: 700;
+.preset-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #1e293b;
+  white-space: nowrap;
+}
+
+.preset-icon {
+  color: #10b981;
+  width: 18px;
+  height: 18px;
+}
+
+.preset-buttons-group {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
+  flex: 1;
 }
 
-.btn-reset {
-  display: flex;
+.btn-preset-chip {
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
-  background: none;
-  border: 1px solid var(--border-color);
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-muted);
+  gap: 6px;
+  background: #f1f5f9;
+  color: #334155;
+  border: 1.5px solid #e2e8f0;
+  padding: 7px 14px;
+  border-radius: 24px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.btn-preset-chip:hover {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.btn-preset-chip.active {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #10b981;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+  transform: translateY(-1px);
+}
+
+.btn-preset-chip .chip-emoji {
+  font-size: 1.05rem;
+}
+
+.btn-custom-weights {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  color: #475569;
+  border: 1.5px solid #cbd5e1;
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
-.btn-reset:hover {
-  background: #f1f5f9;
-  color: var(--text-main);
+.btn-custom-weights:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
 }
+
+.weight-modal-card {
+  max-width: 860px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.weight-modal-desc {
+  font-size: 0.88rem;
+  color: #64748b;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+/* Sidebar Drag Handle (Visible only on mobile) */
+.sidebar-drag-handle {
+  display: none;
+  width: 44px;
+  height: 5px;
+  background: #cbd5e1;
+  border-radius: 3px;
+  margin: 6px auto 10px;
+}
+
+/* === Custom Weight Sliders (Inside Modal) === */
 
 .weight-inputs-grid {
   display: grid;
@@ -1232,7 +1312,7 @@ body {
   to { opacity: 1; transform: scale(1); }
 }
 
-/* Responsive */
+/* Responsive & Mobile Bottom Sheet */
 @media (max-width: 900px) {
   .top-nav {
     flex-direction: column;
@@ -1241,15 +1321,62 @@ body {
   }
   .nav-actions {
     flex-wrap: wrap;
+    width: 100%;
   }
   .weight-inputs-grid {
     grid-template-columns: 1fr 1fr;
   }
-  .detail-sidebar {
-    width: calc(100% - 32px);
+  .compare-modal-card, .selection-modal-card, .weight-modal-card {
+    width: 95%;
   }
-  .compare-modal-card, .selection-modal-card {
+}
+
+@media (max-width: 768px) {
+  .sidebar-drag-handle {
+    display: block;
+  }
+
+  .detail-sidebar {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
     width: 100%;
+    max-width: 100%;
+    max-height: 72vh;
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.25);
+    border: none;
+    border-top: 1px solid #e2e8f0;
+    transform: translateY(105%);
+    transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .detail-sidebar.open {
+    transform: translateY(0);
+  }
+
+  .presets-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .preset-buttons-group {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .btn-custom-weights {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .weight-inputs-grid {
+    grid-template-columns: 1fr;
   }
 }
 
