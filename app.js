@@ -55,7 +55,7 @@ const weightTraInput = document.getElementById('weightTra');
 const resetWeightsBtn = document.getElementById('resetWeightsBtn');
 
 // Preset Chips DOM
-const presetChips = document.querySelectorAll('.btn-preset-chip');
+const presetChips = document.querySelectorAll('.btn-dock-chip, .btn-preset-chip');
 const btnOpenCustomWeights = document.getElementById('btnOpenCustomWeights');
 const customWeightModal = document.getElementById('customWeightModal');
 const btnCloseCustomWeight = document.getElementById('btnCloseCustomWeight');

@@ -120,39 +120,36 @@
         </div>
       </aside>
 
-    </main>
-
-    <!-- 4. Bottom Preset Chips Bar -->
-    <footer class="custom-panel-presets">
-      <div class="presets-container">
-        <div class="preset-label">
-          <i data-lucide="sparkles" class="preset-icon"></i>
-          <span>나의 걷기 스타일:</span>
+      <!-- Floating Style Dock (Map Bottom Center) -->
+      <div class="floating-style-dock">
+        <div class="dock-container">
+          <div class="dock-chips-group">
+            <button class="btn-dock-chip active" data-preset="balance">
+              <span class="dock-emoji">⚖️</span>
+              <span class="dock-text">기본 밸런스</span>
+            </button>
+            <button class="btn-dock-chip" data-preset="healing">
+              <span class="dock-emoji">🧘</span>
+              <span class="dock-text">조용한 힐링</span>
+            </button>
+            <button class="btn-dock-chip" data-preset="cafe">
+              <span class="dock-emoji">☕</span>
+              <span class="dock-text">감성 카페탐방</span>
+            </button>
+            <button class="btn-dock-chip" data-preset="shopping">
+              <span class="dock-emoji">🛍️</span>
+              <span class="dock-text">활기찬 아이쇼핑</span>
+            </button>
+          </div>
+          <div class="dock-divider"></div>
+          <button id="btnOpenCustomWeights" class="btn-dock-settings" title="세부 가중치 직접 조절">
+            <i data-lucide="sliders"></i>
+            <span>세부 조절</span>
+          </button>
         </div>
-        <div class="preset-buttons-group">
-          <button class="btn-preset-chip active" data-preset="balance">
-            <span class="chip-emoji">⚖️</span>
-            <span class="chip-text">기본 밸런스</span>
-          </button>
-          <button class="btn-preset-chip" data-preset="healing">
-            <span class="chip-emoji">🧘</span>
-            <span class="chip-text">1. 조용한 힐링</span>
-          </button>
-          <button class="btn-preset-chip" data-preset="cafe">
-            <span class="chip-emoji">☕</span>
-            <span class="chip-text">2. 감성 카페탐방</span>
-          </button>
-          <button class="btn-preset-chip" data-preset="shopping">
-            <span class="chip-emoji">🛍️</span>
-            <span class="chip-text">3. 활기찬 아이쇼핑</span>
-          </button>
-        </div>
-        <button id="btnOpenCustomWeights" class="btn-custom-weights" title="세부 가중치 직접 조절">
-          <i data-lucide="sliders"></i>
-          <span>세부 조절</span>
-        </button>
       </div>
-    </footer>
+
+    </main>
 
     <!-- ================= MODALS ================= -->
 

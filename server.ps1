@@ -1,5 +1,5 @@
 $port = 8080
-$folder = "C:\Users\jl_rb\Documents\antigravity\intelligent-chandrasekhar\street_dna"
+$folder = $PSScriptRoot
 
 # Kill any existing process on port 8080
 try {
