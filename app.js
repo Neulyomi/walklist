@@ -6,6 +6,7 @@ let activeFeatureId = null;
 let userLocation = null;
 let userMarker = null;
 let mapMarkers = [];
+let selectedLandmarkMarker = null;
 
 // Pinpoint Diagnostics Mode State
 let isPinpointMode = false;
@@ -470,6 +471,29 @@ function highlightFeature(id, shouldFly = true) {
     map.getSource('selected-dong-src').setData(areaGeoJSON);
   }
 
+  // 2) Display Key Landmark Pin for the selected Dong
+  if (selectedLandmarkMarker) {
+    selectedLandmarkMarker.remove();
+    selectedLandmarkMarker = null;
+  }
+
+  if (map && p.street_name) {
+    const landmarkEl = document.createElement('div');
+    landmarkEl.className = 'dong-landmark-pin';
+    landmarkEl.innerHTML = `
+      <div class="landmark-dot-badge"></div>
+      <span class="landmark-text-label">${p.street_name}</span>
+    `;
+
+    selectedLandmarkMarker = new maplibregl.Marker({
+      element: landmarkEl,
+      anchor: 'left',
+      offset: [-4, 0]
+    })
+      .setLngLat(coords)
+      .addTo(map);
+  }
+
   // Update card active state
   document.querySelectorAll('.ranking-card').forEach(c => c.classList.remove('active'));
   const activeCard = document.getElementById(`card-${id}`);
@@ -590,6 +614,10 @@ closeSidebarBtn.addEventListener('click', () => {
   document.querySelectorAll('.dong-map-chip').forEach(m => m.classList.remove('active'));
   if (map && map.getSource('selected-dong-src')) {
     map.getSource('selected-dong-src').setData({ type: 'FeatureCollection', features: [] });
+  }
+  if (selectedLandmarkMarker) {
+    selectedLandmarkMarker.remove();
+    selectedLandmarkMarker = null;
   }
 });
 
@@ -1169,12 +1197,20 @@ sggSelect.addEventListener('change', () => {
     if (map && map.getSource('selected-dong-src')) {
       map.getSource('selected-dong-src').setData({ type: 'FeatureCollection', features: [] });
     }
+    if (selectedLandmarkMarker) {
+      selectedLandmarkMarker.remove();
+      selectedLandmarkMarker = null;
+    }
   } else {
     const firstFeature = rawGeoData.features.find(f => f.properties.province === selectedRegion);
     if (firstFeature) {
       highlightFeature(firstFeature.properties.id, true);
     } else {
       map.flyTo({ center: viewInfo.center, zoom: viewInfo.zoom, pitch: 0, padding: { left: 0 }, duration: 1200 });
+      if (selectedLandmarkMarker) {
+        selectedLandmarkMarker.remove();
+        selectedLandmarkMarker = null;
+      }
     }
   }
 });
@@ -1213,6 +1249,10 @@ if (sidebarDragHandle) {
       document.querySelectorAll('.dong-map-chip').forEach(m => m.classList.remove('active'));
       if (map && map.getSource('selected-dong-src')) {
         map.getSource('selected-dong-src').setData({ type: 'FeatureCollection', features: [] });
+      }
+      if (selectedLandmarkMarker) {
+        selectedLandmarkMarker.remove();
+        selectedLandmarkMarker = null;
       }
     }
   }, { passive: true });

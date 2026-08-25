@@ -1428,3 +1428,48 @@ body {
   color: #059669;
 }
 
+/* === Minimal Dong Landmark Dot & Label (Inside Walkable Area) === */
+.dong-landmark-pin {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  pointer-events: none;
+  font-family: var(--font-main);
+  animation: landmarkFadeIn 0.28s ease-out forwards;
+}
+
+.landmark-dot-badge {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #059669;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.4), 0 2px 6px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+.landmark-text-label {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #064e3b;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  padding: 3px 8px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  border: 1px solid #a7f3d0;
+  white-space: nowrap;
+}
+
+@keyframes landmarkFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
