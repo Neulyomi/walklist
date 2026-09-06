@@ -153,6 +153,58 @@
 
     <!-- ================= MODALS ================= -->
 
+    <!-- Landing Introduction Overlay -->
+    <div id="landingOverlay" class="landing-overlay">
+      <div class="landing-card">
+        <div class="landing-badge">
+          <i data-lucide="footprints"></i>
+          <span>공간 빅데이터 기반 보행 가치 분석</span>
+        </div>
+        <h1 class="landing-title">걷기 좋은 동네 <span class="landing-brand">WalkList</span></h1>
+        <p class="landing-subtitle">
+          지나치게 상업화된 과밀 핫플을 벗어나, 소소한 정취와 걷는 즐거움이 살아있는 전국의 숨은 로컬 동네를 4대 과학적 지표로 발굴·추천합니다.
+        </p>
+
+        <div class="landing-pillars">
+          <div class="landing-pillar-item">
+            <span class="pillar-icon">👥</span>
+            <div class="pillar-text">
+              <strong>5m 골든존 밀도</strong>
+              <small>너무 붐비지도 휑하지도 않은 적정 활력</small>
+            </div>
+          </div>
+          <div class="landing-pillar-item">
+            <span class="pillar-icon">🌿</span>
+            <div class="pillar-text">
+              <strong>안심 도보 환경</strong>
+              <small>넓은 보도폭과 차량 통제·완경사 보행로</small>
+            </div>
+          </div>
+          <div class="landing-pillar-item">
+            <span class="pillar-icon">🎪</span>
+            <div class="pillar-text">
+              <strong>소소한 로컬 이벤트</strong>
+              <small>골목 공방·카페·주말 플리마켓</small>
+            </div>
+          </div>
+          <div class="landing-pillar-item">
+            <span class="pillar-icon">🚌</span>
+            <div class="pillar-text">
+              <strong>초역세권 대중교통</strong>
+              <small>지하철 5분 컷 및 풍부한 버스 노선</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="landing-action">
+          <button id="btnEnterApp" class="btn-landing-enter" onclick="document.getElementById('landingOverlay').classList.add('hidden')">
+            <span>동네 탐색 시작하기</span>
+            <i data-lucide="arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- 1. Street Selection Criteria Modal -->
     <div id="selectionModal" class="modal-backdrop hidden">
       <div class="modal-card selection-modal-card">
