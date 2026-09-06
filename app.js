@@ -94,30 +94,7 @@ const closeSidebarBtn = document.getElementById('closeSidebarBtn');
 function initMap() {
   map = new maplibregl.Map({
     container: 'map',
-    style: {
-      version: 8,
-      sources: {
-        'carto-positron': {
-          type: 'raster',
-          tiles: [
-            'https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png',
-            'https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png',
-            'https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png'
-          ],
-          tileSize: 256,
-          attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; OpenStreetMap contributors'
-        }
-      },
-      layers: [
-        {
-          id: 'carto-layer',
-          type: 'raster',
-          source: 'carto-positron',
-          minzoom: 0,
-          maxzoom: 19
-        }
-      ]
-    },
+    style: 'https://tiles.openfreemap.org/styles/positron',
     center: [127.8, 36.0],
     zoom: 6.8,
     pitch: 0
